@@ -1,0 +1,30 @@
+﻿@page "/"
+@inherits LayoutComponentBase
+@using Biblioteca_Blazor_v1.Client.Components
+@inject AuthContext AuthContext
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">Bienvenido a la Biblioteca Virtual</h1>
+        @if (!string.IsNullOrEmpty(AuthContext.UserName))
+        {
+            <p class="lead">Hola, <strong>@AuthContext.UserName</strong>.</p>
+        }
+
+    </div>
+
+    <div class="mt-4">
+        <BookCarousel />
+    </div>
+</div>
+
+@code {
+    private bool isAuthenticated = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Verificar el estado de autenticación cada vez que el componente se renderice
+        isAuthenticated = !string.IsNullOrEmpty(AuthContext.UserName);
+        await base.OnParametersSetAsync();
+    }
+}

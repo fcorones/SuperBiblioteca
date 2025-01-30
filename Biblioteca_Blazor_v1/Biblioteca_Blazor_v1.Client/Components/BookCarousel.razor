@@ -1,0 +1,93 @@
+﻿@using BibliotecaDeClasesWinformYBlazor.Servicios;
+@using BibliotecaDeClasesWinformYBlazor.Models;
+@inject LibroService LibroService
+@inject NavigationManager Navigation
+
+
+@if (isLoading)
+{
+    <p>Cargando libros...</p>
+}
+else if (errorMessage != null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (!Libros.Any())
+{
+    <p>No se encontraron libros.</p>
+}
+else
+{
+    <div class="book-grid">
+        @foreach (var libro in Libros.Where(l => !l.Eliminado))
+        {
+            <div class="book-item" @key="libro.Id" @onclick="() => VerDetalles(libro.Id)">
+                <img src="@libro.PortadaUrl" alt="@libro.Titulo" class="book-cover" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Libro> Libros = new();
+    private bool isLoading = true;
+    private string errorMessage = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+
+        try
+        {
+            isLoading = true;
+            Libros = await LibroService.GetLibrosAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al cargar los libros: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            //StateHasChanged();
+        }
+        
+    }
+
+    private void VerDetalles(int libroId)
+    {
+        // Navegar a la página de detalles del libro
+        Navigation.NavigateTo($"/libro/{libroId}");
+    }
+}
+
+<style>
+    .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .book-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 250px; /* Altura fija para cada cuadrado del mosaico */
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        .book-item:hover {
+            transform: scale(1.05);
+        }
+
+    .book-cover {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>

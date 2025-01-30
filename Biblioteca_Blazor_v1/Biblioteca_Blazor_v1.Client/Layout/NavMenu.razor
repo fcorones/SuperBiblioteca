@@ -1,0 +1,79 @@
+﻿@inject AuthContext AuthContext
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark bg-dark border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Biblioteca Virtual</a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@(_collapseNavMenu ? "collapse" : null) nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill me-2"></span> Inicio
+            </NavLink>
+        </div>
+
+        @if (isAuthenticated)
+        {
+            <div class="nav-item px-3">
+                <a class="nav-link text-white" href="#" @onclick="Logout">
+                    <span class="bi bi-box-arrow-right me-2"></span> Cerrar sesión
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link text-white" href="login">
+                    <span class="bi bi-box-arrow-in-right me-2"></span> Iniciar sesión
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link text-white" href="register">
+                    <span class="bi bi-person-plus-fill me-2"></span> Registrarse
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    private bool isAuthenticated = false;
+    private string userRole = string.Empty;
+    private bool _collapseNavMenu = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthContext.OnChange += StateHasChanged;
+        Console.WriteLine("[NavMenu] Cargando autenticación...");
+        await AuthContext.LoadTokenFromLocalStorageAsync();
+        isAuthenticated = !string.IsNullOrEmpty(AuthContext.UserToken);
+        //StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AuthContext.OnChange -= StateHasChanged;
+    }
+
+    private async Task Logout()
+    {
+        Console.WriteLine("[NavMenu] Cerrando sesión...");
+        await AuthContext.LogoutAsync();
+        isAuthenticated = false;
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
+
+    private void ToggleNavMenu()
+    {
+        _collapseNavMenu = !_collapseNavMenu;
+    }
+
+    
+}

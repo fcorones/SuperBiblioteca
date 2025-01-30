@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+@inject AuthContext AuthContext
+@inject NavigationManager NavigationManager
+@using Biblioteca_Blazor_v1.Client.Pages
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private bool isAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        
+            Console.WriteLine("Cargando token desde localStorage..."); // Depuración
+            await AuthContext.LoadTokenFromLocalStorageAsync();
+            isAuthenticated = !string.IsNullOrEmpty(AuthContext.UserToken);
+            Console.WriteLine("Estado de autenticación: " + isAuthenticated); // Depuración
+            StateHasChanged();
+        
+    }
+
+   
+}

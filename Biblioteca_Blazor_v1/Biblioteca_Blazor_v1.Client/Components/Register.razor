@@ -1,0 +1,84 @@
+﻿@page "/register"
+@layout MainLayout
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject AuthContext AuthContext
+@using BibliotecaDeClasesWinformYBlazor.Models
+@using BibliotecaDeClasesWinformYBlazor
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title mb-0">Registrarse</h3>
+        </div>
+        <div class="card-body">
+            <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">
+                        <span class="bi bi-person-fill me-2"></span>Nombre Completo
+                    </label>
+                    <InputText id="nombre" class="form-control" @bind-Value="registerModel.Nombre" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <span class="bi bi-lock-fill me-2"></span>Contraseña
+                    </label>
+                    <InputText id="password" type="password" class="form-control" @bind-Value="Password" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        <span class="bi bi-envelope-fill me-2"></span>Email
+                    </label>
+                    <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="direccion" class="form-label">
+                        <span class="bi bi-house-door-fill me-2"></span>Dirección
+                    </label>
+                    <InputText id="direccion" class="form-control" @bind-Value="registerModel.Direccion" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="telefono" class="form-label">
+                        <span class="bi bi-telephone-fill me-2"></span>Teléfono
+                    </label>
+                    <InputText id="telefono" class="form-control" @bind-Value="registerModel.Telefono" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <span class="bi bi-person-plus-fill me-2"></span>Registrarse
+                </button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Usuario registerModel = new Usuario();
+    private string Password { get; set; } = string.Empty;
+
+    private async Task HandleRegister()
+    {
+        registerModel.RolNombre = "USUARIO";
+        registerModel.Eliminado = false;
+        registerModel.ContraseñaHasheada = Password;
+
+        var httpClient = HttpClientProvider.GetHttpClient();
+        var response = await httpClient.PostAsJsonAsync("api/Usuario/register", registerModel);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error al registrar usuario: {errorMessage}");
+        }
+    }
+}
