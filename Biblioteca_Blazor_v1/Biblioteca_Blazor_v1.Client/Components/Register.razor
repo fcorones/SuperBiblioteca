@@ -3,8 +3,11 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject AuthContext AuthContext
+@inject UsuarioService UsuarioService
 @using BibliotecaDeClasesWinformYBlazor.Models
 @using BibliotecaDeClasesWinformYBlazor
+@using BibliotecaDeClasesWinformYBlazor.Servicios
+@using System.ComponentModel.DataAnnotations
 
 <div class="container mt-5">
     <div class="card shadow-sm">
@@ -21,6 +24,7 @@
                         <span class="bi bi-person-fill me-2"></span>Nombre Completo
                     </label>
                     <InputText id="nombre" class="form-control" @bind-Value="registerModel.Nombre" />
+                    <ValidationMessage For="@(() => registerModel.Nombre)" />
                 </div>
 
                 <div class="mb-3">
@@ -28,6 +32,7 @@
                         <span class="bi bi-lock-fill me-2"></span>Contraseña
                     </label>
                     <InputText id="password" type="password" class="form-control" @bind-Value="Password" />
+                    <ValidationMessage For="@(() => Password)" />
                 </div>
 
                 <div class="mb-3">
@@ -35,6 +40,7 @@
                         <span class="bi bi-envelope-fill me-2"></span>Email
                     </label>
                     <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+                    <ValidationMessage For="@(() => registerModel.Email)" />
                 </div>
 
                 <div class="mb-3">
@@ -42,6 +48,7 @@
                         <span class="bi bi-house-door-fill me-2"></span>Dirección
                     </label>
                     <InputText id="direccion" class="form-control" @bind-Value="registerModel.Direccion" />
+                    <ValidationMessage For="@(() => registerModel.Direccion)" />
                 </div>
 
                 <div class="mb-3">
@@ -49,7 +56,15 @@
                         <span class="bi bi-telephone-fill me-2"></span>Teléfono
                     </label>
                     <InputText id="telefono" class="form-control" @bind-Value="registerModel.Telefono" />
+                    <ValidationMessage For="@(() => registerModel.Telefono)" />
                 </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                }
 
                 <button type="submit" class="btn btn-primary w-100">
                     <span class="bi bi-person-plus-fill me-2"></span>Registrarse
@@ -62,23 +77,39 @@
 @code {
     private Usuario registerModel = new Usuario();
     private string Password { get; set; } = string.Empty;
+    private string errorMessage = string.Empty;
 
     private async Task HandleRegister()
     {
-        registerModel.RolNombre = "USUARIO";
-        registerModel.Eliminado = false;
-        registerModel.ContraseñaHasheada = Password;
+        try
+        {
+            // Asignar valores adicionales al modelo
+            registerModel.RolNombre = "USUARIO";
+            registerModel.Eliminado = false;
+            registerModel.ContraseñaHasheada = Password;
 
-        var httpClient = HttpClientProvider.GetHttpClient();
-        var response = await httpClient.PostAsJsonAsync("api/Usuario/register", registerModel);
-        if (response.IsSuccessStatusCode)
-        {
-            NavigationManager.NavigateTo("/login");
+            // Llamar al servicio para crear el usuario
+            var response = await UsuarioService.CrearUsuarioAsync(registerModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Mostrar mensaje emergente de registro exitoso
+                await JSRuntime.InvokeVoidAsync("alert", "Registro exitoso");
+
+                // Redirigir a la página principal
+                NavigationManager.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                // Mostrar mensaje de error si el registro falla
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Error al registrar usuario: {errorResponse}";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Error al registrar usuario: {errorMessage}");
+            // Manejar errores inesperados
+            errorMessage = $"Ocurrió un error inesperado: {ex.Message}";
         }
     }
 }

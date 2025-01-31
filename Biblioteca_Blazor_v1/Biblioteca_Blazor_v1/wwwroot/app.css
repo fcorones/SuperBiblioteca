@@ -149,3 +149,58 @@ h1:focus {
     .card-libro-detalle img {
         border-radius: 10px 0 0 10px; /* Bordes redondeados solo en el lado izquierdo */
     }
+
+.reservas-list {
+    margin-top: 20px;
+}
+
+.reserva-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+    .reserva-item p {
+        margin: 5px 0;
+    }
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-header {
+    grid-column: span 7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+}
+
+.calendar-day {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+    .calendar-day.occupied {
+        background-color: #ffcccc;
+    }
+
+    .calendar-day.selected {
+        background-color: #ccffcc;
+    }
+
+.e-disabled-date {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+

@@ -2,6 +2,7 @@ using Biblioteca_Blazor_v1.Components;
 using BibliotecaDeClasesWinformYBlazor;
 using BibliotecaDeClasesWinformYBlazor.Servicios;
 using MudBlazor.Services;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddHttpClient();
 
 // Registrar AuthContext como un servicio
 builder.Services.AddScoped<AuthContext>();
@@ -26,7 +29,14 @@ builder.Services.AddScoped<PrestamoService>(sp =>
     return new PrestamoService(authContext);
 });
 
+builder.Services.AddScoped<UsuarioService>(sp =>
+{
+    var authContext = sp.GetRequiredService<AuthContext>();
+    return new UsuarioService(authContext);
+});
 
+
+builder.Services.AddSyncfusionBlazor();
 // Registrar MudBlazor
 builder.Services.AddMudServices();
 

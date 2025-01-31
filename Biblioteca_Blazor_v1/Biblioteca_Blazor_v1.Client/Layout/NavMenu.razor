@@ -21,6 +21,12 @@
         @if (isAuthenticated)
         {
             <div class="nav-item px-3">
+                <NavLink class="nav-link text-white" href="misreservas">
+                    <span class="bi bi-journal-bookmark me-2"></span> Mis Reservas
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
                 <a class="nav-link text-white" href="#" @onclick="Logout">
                     <span class="bi bi-box-arrow-right me-2"></span> Cerrar sesión
                 </a>
@@ -54,7 +60,6 @@
         Console.WriteLine("[NavMenu] Cargando autenticación...");
         await AuthContext.LoadTokenFromLocalStorageAsync();
         isAuthenticated = !string.IsNullOrEmpty(AuthContext.UserToken);
-        //StateHasChanged();
     }
 
     public void Dispose()
@@ -74,6 +79,4 @@
     {
         _collapseNavMenu = !_collapseNavMenu;
     }
-
-    
 }

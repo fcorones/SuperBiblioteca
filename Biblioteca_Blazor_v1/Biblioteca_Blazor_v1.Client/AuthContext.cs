@@ -30,7 +30,7 @@ public class AuthContext : IAuthContext
         }
     }
 
-    private void NotifyStateChanged() => OnChange?.Invoke();
+    public void NotifyStateChanged() => OnChange?.Invoke();
     public string UserName => _userName;
     public int UserId => _userId;
 
@@ -65,17 +65,18 @@ public class AuthContext : IAuthContext
 
     public async Task SaveTokenToLocalStorageAsync(string token)
     {
-        Console.WriteLine($"[AuthContext] Guardando token en LocalStorage: {token}");
-        await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "UserToken", token);
+        Console.WriteLine($"[AuthContext] Guardando token en SessionStorage: {token}");
+        await _jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "UserToken", token);
         UserToken = token;
     }
+
 
     public async Task LoadTokenFromLocalStorageAsync()
     {
         try
         {
-            var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "UserToken");
-            Console.WriteLine($"[AuthContext] Token cargado desde LocalStorage: {token}");
+            var token = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "UserToken");
+            Console.WriteLine($"[AuthContext] Token cargado desde SessionStorage: {token}");
 
             if (!string.IsNullOrEmpty(token))
             {
@@ -84,18 +85,21 @@ public class AuthContext : IAuthContext
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[AuthContext] Error al cargar el token desde LocalStorage: {ex.Message}");
+            Console.WriteLine($"[AuthContext] Error al cargar el token desde SessionStorage: {ex.Message}");
         }
     }
 
+
     public async Task LogoutAsync()
     {
-        Console.WriteLine("[AuthContext] Cerrando sesión. Eliminando token.");
-        await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "UserToken");
+        Console.WriteLine("[AuthContext] Cerrando sesión. Eliminando token de SessionStorage.");
+        await _jsRuntime.InvokeVoidAsync("sessionStorage.removeItem", "UserToken");
         _userToken = string.Empty;
         _userName = string.Empty;
         _userId = 0;
+        NotifyStateChanged(); // Notificar a los componentes que el estado ha cambiado
     }
+
 
     public void Initialize()
     {

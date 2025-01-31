@@ -32,10 +32,33 @@ else
     private List<Libro> Libros = new();
     private bool isLoading = true;
     private string errorMessage = null;
+    private bool _datosCargados = false;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_datosCargados)
+        {
+            try
+            {
+                isLoading = true;
+                Libros = await LibroService.GetLibrosAsync();
+                _datosCargados = true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Error al cargar los libros: {ex.Message}";
+            }
+            finally
+            {
+                isLoading = false;
+                StateHasChanged(); // Asegurar que la UI se actualiza después de la carga
+            }
+        }
+    }
+    /*
     protected override async Task OnInitializedAsync()
     {
-        
+        if (Libros.Any()) return; // Evita cargar si ya se hizo antes
 
         try
         {
@@ -49,11 +72,9 @@ else
         finally
         {
             isLoading = false;
-            //StateHasChanged();
         }
-        
     }
-
+    */
     private void VerDetalles(int libroId)
     {
         // Navegar a la página de detalles del libro

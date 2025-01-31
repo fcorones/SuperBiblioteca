@@ -1,6 +1,7 @@
 ﻿@page "/reservar/{LibroId:int}"
 @using BibliotecaDeClasesWinformYBlazor.Servicios
 @using BibliotecaDeClasesWinformYBlazor.Models
+@using Biblioteca_Blazor_v1.Client.Components
 @inject LibroService LibroService
 @inject AuthContext AuthContext
 @inject NavigationManager Navigation
@@ -20,21 +21,38 @@
 else
 {
     <div class="form-group">
-        <label for="libroNombre">Nombre del Libro</label>
-        <input type="text" class="form-control" id="libroNombre" value="@Libro.Titulo" readonly />
+        <label>Nombre del Libro</label>
+        <input type="text" class="form-control" value="@Libro.Titulo" readonly />
+    </div>
+
+    <!-- Mostrar las fechas seleccionadas actualmente -->
+    <div class="form-group">
+        <label>Fecha de Retiro seleccionada: </label>
+        <span>@(FechaRetiro.ToShortDateString())</span>
     </div>
 
     <div class="form-group">
-        <label for="fechaRetiro">Fecha de Retiro</label>
-        <input type="date" class="form-control" id="fechaRetiro" @bind="FechaRetiro" />
+        <label>Fecha de Devolución seleccionada: </label>
+        <span>@(FechaDevolucion.ToShortDateString())</span>
     </div>
 
-    <div class="form-group">
-        <label for="fechaDevolucion">Fecha de Devolución</label>
-        <input type="date" class="form-control" id="fechaDevolucion" @bind="FechaDevolucion" />
+    <!-- Botón para alternar qué fecha se está eligiendo en el calendario -->
+    <div class="mt-3 mb-2">
+        <button class="btn btn-secondary" @onclick="ToggleSeleccion">
+            Seleccionar @(SeleccionandoRetiro ? "Devolución" : "Retiro")
+        </button>
+        <small class="text-muted">Actualmente eligiendo: @(SeleccionandoRetiro ? "Retiro" : "Devolución")</small>
     </div>
 
-    <button class="btn btn-primary" @onclick="Reservar">Reservar</button>
+    <!-- Aquí usamos nuestro Calendar.razor -->
+    <Calendar 
+        CurrentDate="CurrentCalendarDate"
+        OccupiedDates="FechasOcupadas"
+        FechaRetiroSeleccionada="FechaRetiro"
+        FechaDevolucionSeleccionada="FechaDevolucion"
+        OnDateSelected="OnCalendarDateSelected" />
+
+    <button class="btn btn-primary mt-3" @onclick="Reservar">Reservar</button>
 
     @if (!string.IsNullOrEmpty(MensajeError))
     {
@@ -49,15 +67,27 @@ else
     public int LibroId { get; set; }
 
     private Libro Libro { get; set; }
+
+    // Fechas internas seleccionadas por el usuario
     private DateTime FechaRetiro { get; set; } = DateTime.Today;
     private DateTime FechaDevolucion { get; set; } = DateTime.Today.AddDays(7);
+
+    private bool SeleccionandoRetiro { get; set; } = true; // Toggle para saber qué fecha se está eligiendo
+    private DateTime CurrentCalendarDate { get; set; } = DateTime.Today; 
+    // Si se desea empezar el calendario en la fecha actual
+
     private string MensajeError { get; set; }
+    private List<DateTime> FechasOcupadas { get; set; } = new List<DateTime>();
 
     protected override async Task OnParametersSetAsync()
     {
         try
         {
+            // 1) Obtener detalles del libro
             Libro = await LibroService.GetLibroByIdAsync(LibroId);
+
+            // 2) Obtener fechas ocupadas del libro
+            await CargarFechasOcupadas();
         }
         catch (Exception ex)
         {
@@ -65,12 +95,59 @@ else
         }
     }
 
+    private async Task CargarFechasOcupadas()
+    {
+        var prestamos = await PrestamoService.GetPrestamosAsync();
+        var prestamosDelLibro = prestamos
+            .Where(p => p.LibroId == LibroId && !p.Eliminado)
+            .ToList();
+
+        FechasOcupadas.Clear();
+        foreach (var prestamo in prestamosDelLibro)
+        {
+            for (var fecha = prestamo.FechaPrestamo; fecha <= prestamo.FechaDevolucion; fecha = fecha.AddDays(1))
+            {
+                FechasOcupadas.Add(fecha);
+            }
+        }
+
+        Console.WriteLine($"Fechas ocupadas cargadas: {FechasOcupadas.Count}");
+    }
+
+    private void ToggleSeleccion()
+    {
+        // Cambia entre elegir retiro o devolución
+        SeleccionandoRetiro = !SeleccionandoRetiro;
+    }
+
+    // Este método se invoca cada vez que el usuario hace clic en un día del calendario
+    private void OnCalendarDateSelected(DateTime date)
+    {
+        // Si el día está ocupado, podrías ignorar la selección
+        if (FechasOcupadas.Contains(date))
+        {
+            return; 
+        }
+
+        if (SeleccionandoRetiro)
+        {
+            FechaRetiro = date;
+        }
+        else
+        {
+            FechaDevolucion = date;
+        }
+
+        // Opcional: si quieres que el calendario salte automáticamente al mes donde se seleccionó
+        // CurrentCalendarDate = new DateTime(date.Year, date.Month, 1);
+    }
+
     private async Task Reservar()
     {
-        // Validar fechas
+        // Validaciones
         if (FechaRetiro < DateTime.Today)
         {
-            MensajeError = "La fecha de retiro no puede ser anterior a la fecha actual.";
+            MensajeError = "La fecha de retiro no puede ser anterior a hoy.";
             return;
         }
 
@@ -79,8 +156,6 @@ else
             MensajeError = "La fecha de devolución no puede ser anterior a la fecha de retiro.";
             return;
         }
-        Console.WriteLine("==============USUARIO=============");
-        Console.WriteLine(AuthContext.UserId);
 
         // Verificar que el UsuarioId sea válido
         if (AuthContext.UserId <= 0)
@@ -89,19 +164,11 @@ else
             return;
         }
 
-        // Obtener todos los préstamos del libro
-        var prestamos = await PrestamoService.GetPrestamosAsync();
-        var prestamosDelLibro = prestamos
-            .Where(p => p.LibroId == LibroId && !p.Eliminado)
-            .ToList();
-
-        // Verificar si hay solapamiento de fechas
-        var solapamiento = prestamosDelLibro.Any(p =>
-            FechaRetiro <= p.FechaDevolucion && FechaDevolucion >= p.FechaPrestamo);
-
-        if (solapamiento)
+        // Verificar solapamiento con las fechas ocupadas
+        bool haySolapamiento = FechasOcupadas.Any(f => f >= FechaRetiro && f <= FechaDevolucion);
+        if (haySolapamiento)
         {
-            MensajeError = "El libro no está disponible en el rango de fechas seleccionado.";
+            MensajeError = "El libro no está disponible en alguna(s) de las fechas seleccionadas.";
             return;
         }
 
@@ -117,11 +184,10 @@ else
             Eliminado = false
         };
 
-        // Intentar reservar el libro
         try
         {
             await PrestamoService.CrearPrestamoAsync(prestamo);
-            Navigation.NavigateTo("/"); // Redirigir al inicio si no hay errores
+            Navigation.NavigateTo("/"); 
         }
         catch (Exception ex)
         {

@@ -56,7 +56,7 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
             return usuarios;
         }
 
-        public async Task CrearUsuarioAsync(Usuario usuario)
+        public async Task<HttpResponseMessage> CrearUsuarioAsync(Usuario usuario)
         {
             var json = JsonConvert.SerializeObject(usuario);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -67,6 +67,8 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Error al crear el usuario: {response.StatusCode} - {errorMessage}");
             }
+
+            return response;
         }
 
         public async Task ModificarUsuarioAsync(Usuario usuario)

@@ -1,0 +1,93 @@
+﻿@page "/misreservas"
+@inject AuthContext AuthContext
+@inject NavigationManager NavigationManager
+@inject PrestamoService PrestamoService
+@inject LibroService LibroService
+@using BibliotecaDeClasesWinformYBlazor.Models
+@using BibliotecaDeClasesWinformYBlazor.Servicios
+
+<h3>Mis Reservas</h3>
+
+@if (reservas == null)
+{
+    <p>Cargando reservas...</p>
+}
+else if (!reservas.Any())
+{
+    <p>No tienes reservas.</p>
+}
+else
+{
+    <div class="reservas-list">
+        @foreach (var reserva in reservas)
+        {
+            <div class="reserva-item">
+                <p><strong>Libro:</strong> @reserva.LibroNombre</p>
+                <p><strong>Autor:</strong> @reserva.NombreAutor</p>
+                <p><strong>Fecha de préstamo:</strong> @reserva.FechaPrestamo.ToShortDateString()</p>
+                <p><strong>Fecha de devolución:</strong> @reserva.FechaDevolucion.ToShortDateString()</p>
+                <p><strong>Estado:</strong> @(reserva.Activo ? "Activo" : "Inactivo")</p>
+                <hr />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<ReservaViewModel> reservas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Obtener el ID del usuario logeado desde AuthContext
+            var usuarioId = AuthContext.UserId;
+            Console.WriteLine($"[MisReservas] UsuarioId: {usuarioId}");
+
+            if (usuarioId == 0)
+            {
+                // Si no hay un usuario logeado, redirigir a la página de login
+                NavigationManager.NavigateTo("/login");
+                return;
+            }
+
+            // Obtener todos los préstamos desde el servicio
+            var prestamos = await PrestamoService.GetPrestamosAsync();
+            Console.WriteLine($"[MisReservas] Préstamos cargados: {prestamos?.Count ?? 0}");
+
+            // Obtener todos los libros desde el servicio
+            var libros = await LibroService.GetLibrosAsync();
+            Console.WriteLine($"[MisReservas] Libros cargados: {libros?.Count ?? 0}");
+
+            // Filtrar los préstamos del usuario logeado
+            reservas = prestamos?
+                .Where(p => p.UsuarioId == usuarioId && !p.Eliminado) // Excluir préstamos eliminados
+                .Select(p => new ReservaViewModel
+                    {
+                        Id = p.Id,
+                        FechaPrestamo = p.FechaPrestamo,
+                        FechaDevolucion = p.FechaDevolucion,
+                        Activo = p.Activo,
+                        LibroNombre = libros?.FirstOrDefault(l => l.Id == p.LibroId)?.Titulo ?? "Desconocido",
+                        NombreAutor = libros?.FirstOrDefault(l => l.Id == p.LibroId)?.NombreAutor ?? "Desconocido"
+                    })
+                .ToList();
+
+            Console.WriteLine($"[MisReservas] Reservas filtradas: {reservas.Count}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar las reservas: {ex.Message}");
+        }
+    }
+
+    private class ReservaViewModel
+    {
+        public int Id { get; set; }
+        public DateTime FechaPrestamo { get; set; }
+        public DateTime FechaDevolucion { get; set; }
+        public bool Activo { get; set; }
+        public string LibroNombre { get; set; }
+        public string NombreAutor { get; set; }
+    }
+}

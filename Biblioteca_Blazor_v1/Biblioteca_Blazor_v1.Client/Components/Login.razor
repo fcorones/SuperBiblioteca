@@ -5,6 +5,7 @@
 @inject AuthContext AuthContext
 @using BibliotecaDeClasesWinformYBlazor.Models
 @using BibliotecaDeClasesWinformYBlazor
+@using System.ComponentModel.DataAnnotations
 
 <div class="container mt-5">
     <div class="card shadow-sm">
@@ -14,13 +15,13 @@
         <div class="card-body">
             <EditForm Model="@loginRequest" OnValidSubmit="HandleLogin">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
 
                 <div class="mb-3">
                     <label for="email" class="form-label">
                         <span class="bi bi-envelope-fill me-2"></span>Email
                     </label>
                     <InputText id="email" class="form-control" @bind-Value="loginRequest.Email" />
+                    <ValidationMessage For="@(() => loginRequest.Email)" />
                 </div>
 
                 <div class="mb-3">
@@ -28,10 +29,27 @@
                         <span class="bi bi-lock-fill me-2"></span>Contraseña
                     </label>
                     <InputText id="contraseña" type="password" class="form-control" @bind-Value="loginRequest.Contraseña" />
+                    <ValidationMessage For="@(() => loginRequest.Contraseña)" />
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 mb-3">
-                    <span class="bi bi-box-arrow-in-right me-2"></span>Ingresar
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="ms-2">Cargando...</span>
+                    }
+                    else
+                    {
+                        <span class="bi bi-box-arrow-in-right me-2">Ingresar</span>
+                        
+                    }
                 </button>
 
                 <div class="text-center">
@@ -47,44 +65,75 @@
 
 @code {
     private LoginRequest loginRequest = new LoginRequest();
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
 
     private async Task HandleLogin()
     {
-        var httpClient = HttpClientProvider.GetHttpClient();
-        var response = await httpClient.PostAsJsonAsync("api/Usuarios/login", loginRequest);
+        isLoading = true;
+        errorMessage = string.Empty;
 
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-
-            if (result != null && !string.IsNullOrEmpty(result.Token))
+            // Validar el formato del email
+            if (!loginRequest.Email.Contains("@"))
             {
-                Console.WriteLine($"[Login] Token recibido: {result.Token}");
+                errorMessage = "El email no es válido.";
+                isLoading = false;
+                return;
+            }
 
-                await AuthContext.SaveTokenToLocalStorageAsync(result.Token);
-                Console.WriteLine($"[Login] Usuario autenticado como: {AuthContext.UserName}");
+            var httpClient = HttpClientProvider.GetHttpClient();
+            var response = await httpClient.PostAsJsonAsync("api/Usuarios/login", loginRequest);
 
-                //StateHasChanged();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
 
-                NavigationManager.NavigateTo("/", forceLoad: true);
+                if (result != null && !string.IsNullOrEmpty(result.Token))
+                {
+                    Console.WriteLine($"[Login] Token recibido: {result.Token}");
 
-                
+                    await AuthContext.SaveTokenToLocalStorageAsync(result.Token);
+                    Console.WriteLine($"[Login] Usuario autenticado como: {AuthContext.UserName}");
+
+                    NavigationManager.NavigateTo("/", forceLoad: true);
+                }
+                else
+                {
+                    errorMessage = "No se recibió un token válido.";
+                }
             }
             else
             {
-                Console.WriteLine("[Login] Error: No se recibió un token válido.");
+                // Capturar el mensaje de error del servidor
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                errorMessage = "Credenciales inválidas. Por favor, verifica tu email y contraseña.";
+
+                // Si el servidor devuelve un mensaje de error específico, úsalo
+                if (!string.IsNullOrEmpty(errorResponse))
+                {
+                    errorMessage = errorResponse;
+                }
             }
         }
-        else
+        catch (Exception ex)
         {
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[Login] Error al iniciar sesión: {errorMessage}");
+            errorMessage = "Ocurrió un error inesperado: " + ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 
     public class LoginRequest
     {
+        [Required(ErrorMessage = "El email es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El email no es válido.")]
         public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
         public string Contraseña { get; set; } = string.Empty;
     }
 
