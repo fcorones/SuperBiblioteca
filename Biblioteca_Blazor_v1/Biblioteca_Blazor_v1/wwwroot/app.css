@@ -166,38 +166,54 @@ h1:focus {
     }
 
 .calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
 }
 
 .calendar-header {
-    grid-column: span 7;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
 }
 
 .calendar-day-header {
+    padding: 10px;
     text-align: center;
+    background-color: #e0e0e0;
     font-weight: bold;
 }
 
 .calendar-day {
-    text-align: center;
     padding: 10px;
-    border: 1px solid #ccc;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
     cursor: pointer;
 }
 
     .calendar-day.occupied {
         background-color: #ffcccc;
+        cursor: not-allowed;
     }
 
     .calendar-day.selected {
-        background-color: #ccffcc;
+        background-color: #cce5ff;
+        font-weight: bold;
     }
 
+    .calendar-day:hover:not(.occupied) {
+        background-color: #e6e6e6;
+    }
 .e-disabled-date {
     background-color: #f8d7da;
     color: #721c24;

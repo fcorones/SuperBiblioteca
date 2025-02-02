@@ -1,11 +1,73 @@
 ﻿@using System.Globalization
 
 <div class="calendar">
+    <style>
+        .calendar {
+            max-width: 700px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f0f0f0;
+            margin-bottom: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .calendar-day-header {
+            padding: 10px;
+            text-align: center;
+            background: #e0e0e0;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+
+        .calendar-day {
+            padding: 15px;
+            text-align: center;
+            background: white;
+            border: 1px solid #ddd;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+            .calendar-day.occupied {
+                background: #ffcccc;
+                cursor: not-allowed;
+            }
+
+            .calendar-day.selected {
+                background: #cce5ff;
+                font-weight: bold;
+            }
+
+            .calendar-day:hover:not(.occupied) {
+                background: #f0f0f0;
+            }
+
+            .calendar-day:empty {
+                background: #f8f8f8;
+            }
+    </style>
+
     <div class="calendar-header">
         <button @onclick="PreviousMonth">‹</button>
         <span>@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(CurrentDate.Month) @CurrentDate.Year</span>
         <button @onclick="NextMonth">›</button>
     </div>
+
     <div class="calendar-grid">
         @foreach (var day in DaysOfWeek)
         {
@@ -13,8 +75,12 @@
         }
         @foreach (var day in Days)
         {
-            <div class="calendar-day @(day.IsOccupied ? "occupied" : "") @(day.IsSelected ? "selected" : "")" @onclick="() => SelectDate(day.Date)">
-                @day.Date.Day
+            <div class="calendar-day @(day.IsOccupied ? "occupied" : "") @(day.IsSelected ? "selected" : "")"
+                 @onclick="() => SelectDate(day.Date)">
+                @if (day.Date != DateTime.MinValue)
+                {
+                    @day.Date.Day
+                }
             </div>
         }
     </div>
@@ -23,6 +89,9 @@
 @code {
     [Parameter]
     public DateTime CurrentDate { get; set; } = DateTime.Today;
+
+    [Parameter]
+    public EventCallback<DateTime> CurrentDateChanged { get; set; } // <- Añadir este
 
     [Parameter]
     public List<DateTime> OccupiedDates { get; set; } = new List<DateTime>();
@@ -49,34 +118,38 @@
         Days.Clear();
         var firstDayOfMonth = new DateTime(CurrentDate.Year, CurrentDate.Month, 1);
         var daysInMonth = DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month);
-        var startDay = (int)firstDayOfMonth.DayOfWeek;
 
+        var firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+        var startDay = (int)firstDayOfMonth.DayOfWeek - (int)firstDayOfWeek;
+        if (startDay < 0) startDay += 7;
+
+        // Días vacíos iniciales
         for (int i = 0; i < startDay; i++)
         {
             Days.Add(new CalendarDay { Date = DateTime.MinValue });
         }
 
+        // Días del mes
         for (int i = 1; i <= daysInMonth; i++)
         {
             var date = new DateTime(CurrentDate.Year, CurrentDate.Month, i);
             bool isOccupied = OccupiedDates.Contains(date);
             bool isSelected = false;
 
+            // Lógica de selección actualizada
             if (FechaRetiroSeleccionada.HasValue && FechaDevolucionSeleccionada.HasValue)
             {
                 var start = FechaRetiroSeleccionada.Value.Date;
                 var end = FechaDevolucionSeleccionada.Value.Date;
-                if (end < start)
-                {
-                    var temp = start;
-                    start = end;
-                    end = temp;
-                }
                 isSelected = date >= start && date <= end;
             }
-            else if (FechaRetiroSeleccionada.HasValue && !FechaDevolucionSeleccionada.HasValue)
+            else if (FechaRetiroSeleccionada.HasValue)
             {
                 isSelected = date == FechaRetiroSeleccionada.Value.Date;
+            }
+            else if (FechaDevolucionSeleccionada.HasValue)
+            {
+                isSelected = date == FechaDevolucionSeleccionada.Value.Date;
             }
 
             Days.Add(new CalendarDay
@@ -85,6 +158,12 @@
                     IsOccupied = isOccupied,
                     IsSelected = isSelected
                 });
+        }
+
+        // Completar semana
+        while (Days.Count % 7 != 0)
+        {
+            Days.Add(new CalendarDay { Date = DateTime.MinValue });
         }
     }
 
@@ -96,15 +175,17 @@
         OnDateSelected.InvokeAsync(date);
     }
 
-    private void PreviousMonth()
+    private async Task PreviousMonth()
     {
         CurrentDate = CurrentDate.AddMonths(-1);
+        await CurrentDateChanged.InvokeAsync(CurrentDate); // <- Notificar al padre
         GenerateCalendar();
     }
 
-    private void NextMonth()
+    private async Task NextMonth()
     {
         CurrentDate = CurrentDate.AddMonths(1);
+        await CurrentDateChanged.InvokeAsync(CurrentDate); // <- Notificar al padre
         GenerateCalendar();
     }
 
