@@ -7,6 +7,143 @@
 @using BibliotecaDeClasesWinformYBlazor
 @using System.ComponentModel.DataAnnotations
 
+<style>
+    /* Estilos generales */
+    .container {
+        font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 500px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #2d2d2d, #404040);
+        padding: 2rem;
+        border-bottom: none;
+    }
+
+    .card-title {
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        font-size: 1.8rem;
+        margin: 0;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    /* Formulario */
+    .form-label {
+        font-weight: 500;
+        color: #4a4a4a;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+        .form-control:focus {
+            border-color: #606060;
+            box-shadow: 0 0 0 3px rgba(96, 96, 96, 0.1);
+            background: #ffffff;
+        }
+
+    /* Botones */
+    .btn-primary {
+        background: linear-gradient(135deg, #4a4a4a, #2d2d2d);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+            transform: scale(1.02);
+        }
+
+    .btn-outline-secondary {
+        border: 2px solid #4a4a4a;
+        color: #4a4a4a;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-secondary:hover {
+            background: #4a4a4a;
+            color: white;
+        }
+
+    /* Iconos */
+    .bi {
+        color: #606060;
+        font-size: 1.2rem;
+        margin-right: 10px;
+        transition: color 0.3s ease;
+    }
+
+    .form-control:focus ~ .bi {
+        color: #404040;
+    }
+
+    /* Alertas y validación */
+    .alert {
+        border-radius: 8px;
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        color: #4a4a4a;
+    }
+
+    .validation-message {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+
+    /* Efectos hover */
+    .nav-link:hover {
+        background: rgba(0,0,0,0.03);
+    }
+
+    /* Animaciones */
+    @@keyframes cardEntrance {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: cardEntrance 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">

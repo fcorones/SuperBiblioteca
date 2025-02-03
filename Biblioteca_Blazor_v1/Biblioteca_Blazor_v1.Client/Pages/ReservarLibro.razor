@@ -124,8 +124,11 @@ else
     private async Task CargarFechasOcupadas()
     {
         var prestamos = await PrestamoService.GetPrestamosAsync();
+
         var prestamosDelLibro = prestamos
-            .Where(p => p.LibroId == LibroId && !p.Eliminado)
+            .Where(p => p.LibroId == LibroId
+                        && !p.Eliminado    // Solo préstamos no eliminados
+                        && p.Activo)      // Y que estén activos
             .ToList();
 
         FechasOcupadas.Clear();
@@ -189,11 +192,12 @@ else
             return;
         }
 
-        // Verificar solapamiento con las fechas ocupadas
-        bool haySolapamiento = FechasOcupadas.Any(f => f >= FechaRetiro && f <= FechaDevolucion);
+        bool haySolapamiento = FechasOcupadas
+        .Any(f => f >= FechaRetiro && f <= FechaDevolucion);
+
         if (haySolapamiento)
         {
-            MensajeError = "El libro no está disponible en alguna(s) de las fechas seleccionadas.";
+            MensajeError = "El libro no está disponible en las fechas seleccionadas";
             return;
         }
 

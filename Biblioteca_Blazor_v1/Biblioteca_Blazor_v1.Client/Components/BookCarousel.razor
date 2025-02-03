@@ -6,7 +6,17 @@
 
 @if (isLoading)
 {
-    <p>Cargando libros...</p>
+    <div class="loading-container">
+        <div class="loading-card">
+            <div class="loading-header">
+                <h3 class="loading-title">Cargando Libros</h3>
+            </div>
+            <div class="loading-body">
+                <div class="spinner"></div>
+                <p class="loading-text">Buscando en nuestra biblioteca...</p>
+            </div>
+        </div>
+    </div>
 }
 else if (errorMessage != null)
 {
@@ -83,6 +93,74 @@ else
 }
 
 <style>
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+    }
+
+    .loading-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        padding: 2rem;
+        text-align: center;
+        width: 300px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .loading-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .loading-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 1.5rem;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #404040, #606060);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .loading-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 4px solid #f0f0f0;
+        border-top: 4px solid #606060;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+        font-family: 'Poppins', sans-serif;
+        color: #4a4a4a;
+        font-size: 0.9rem;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Mantener los estilos existentes del grid de libros */
     .book-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -94,21 +172,28 @@ else
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 250px; /* Altura fija para cada cuadrado del mosaico */
-        background-color: #f0f0f0;
+        height: 250px;
+        background-color: #f8f8f8;
         border-radius: 8px;
         overflow: hidden;
         cursor: pointer;
         transition: transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
         .book-item:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
     .book-cover {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+        transition: opacity 0.2s;
+    }
+
+    .book-item:hover .book-cover {
+        opacity: 0.9;
     }
 </style>

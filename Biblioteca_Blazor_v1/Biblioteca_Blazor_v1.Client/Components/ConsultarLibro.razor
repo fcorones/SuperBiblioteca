@@ -1,0 +1,148 @@
+﻿@page "/consultar-libro"
+@using BibliotecaDeClasesWinformYBlazor.Models
+@using BibliotecaDeClasesWinformYBlazor.Servicios
+@using BibliotecaDeClasesWinformYBlazor
+@inject LibroService LibroService
+@inject PrestamoService PrestamoService
+
+<style>
+    /* ... (los estilos se mantienen igual) ... */
+</style>
+
+<div class="consultar-libro-container">
+    <h3>Consultar Libro</h3>
+
+    <div class="search-box">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" @bind="SearchTerm"
+                       placeholder="Buscar por título (español u original)"
+                       @oninput="HandleSearch" />
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center mt-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="book-results">
+            @if (FilteredLibros.Any())
+            {
+                <div class="list-group">
+                    @foreach (var libro in FilteredLibros)
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5>@libro.TituloEspaniol</h5>
+                                    <div class="text-muted">
+                                        <small>
+                                            Título original: @libro.Titulo<br>
+                                            Editorial: @libro.NombreEditorial<br>
+                                            Año: @(libro.AnioDePublicacion?.ToString() ?? "N/D")
+                                        </small>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-primary btn-sm"
+                                            @onclick="() => CheckAvailability(libro)">
+                                        Consultar disponibilidad
+                                    </button>
+                                </div>
+                            </div>
+                            @if (availabilityMessages.TryGetValue(libro.Id, out var message))
+                            {
+                                <div class="mt-2">
+                                    <span class="@GetAvailabilityClass(message)">
+                                        @message
+                                    </span>
+                                    <div class="text-muted mt-1">
+                                        <small>Estado actual: @(libro.BoolPrestado ? "Prestado" : "Disponible")</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning mt-3">
+                    No se encontraron libros con ese criterio de búsqueda
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Libro> AllLibros = new List<Libro>();
+    private List<Libro> FilteredLibros = new List<Libro>();
+    private Dictionary<int, string> availabilityMessages = new Dictionary<int, string>();
+    private string SearchTerm = string.Empty;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllLibros = await LibroService.GetLibrosAsync();
+        FilterLibros();
+        isLoading = false;
+    }
+
+    private void FilterLibros()
+    {
+        availabilityMessages.Clear(); // Limpiar mensajes al cambiar la búsqueda
+
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            FilteredLibros = AllLibros;
+            return;
+        }
+
+        var term = SearchTerm.Trim().ToLower();
+        FilteredLibros = AllLibros
+            .Where(l =>
+                (l.Titulo?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (l.TituloEspaniol?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false))
+            .ToList();
+    }
+
+    private async Task CheckAvailability(Libro libro)
+    {
+        var prestamos = await PrestamoService.GetPrestamosAsync();
+
+        var prestamosActivos = prestamos
+            .Where(p => p.LibroId == libro.Id &&
+                       p.Activo &&
+                       !p.Eliminado &&
+                       p.FechaDevolucion >= DateTime.Today)
+            .ToList();
+
+        var disponible = !libro.BoolPrestado && !prestamosActivos.Any();
+
+        var message = disponible ?
+            "Disponible para alquiler" :
+            "No disponible - Actualmente en préstamo";
+
+        availabilityMessages[libro.Id] = message; // Almacenar en diccionario
+        StateHasChanged();
+    }
+
+    private string GetAvailabilityClass(string message)
+    {
+        return message.Contains("Disponible") ? "text-success fw-bold" : "text-danger fw-bold";
+    }
+
+    private void HandleSearch(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString() ?? string.Empty;
+        FilterLibros();
+    }
+}
