@@ -54,7 +54,7 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
             if (!response.IsSuccessStatusCode)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Error en la API: {errorMessage}");
+                throw new Exception($" {errorMessage}");
             }
         }
 
@@ -67,7 +67,7 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
             if (!response.IsSuccessStatusCode)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Error en la API: {errorMessage}");
+                throw new Exception($" {errorMessage}");
             }
 
             // Actualizar el estado del libro correspondiente

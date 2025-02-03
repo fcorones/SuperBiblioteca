@@ -6,32 +6,182 @@
 @using BibliotecaDeClasesWinformYBlazor.Models
 @using BibliotecaDeClasesWinformYBlazor.Servicios
 
-<h3>Mis Reservas</h3>
+<style>
+    .reservas-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Poppins', sans-serif;
+    }
 
-@if (reservas == null)
-{
-    <p>Cargando reservas...</p>
-}
-else if (!reservas.Any())
-{
-    <p>No tienes reservas.</p>
-}
-else
-{
-    <div class="reservas-list">
-        @foreach (var reserva in reservas)
-        {
-            <div class="reserva-item">
-                <p><strong>Libro:</strong> @reserva.LibroNombre</p>
-                <p><strong>Autor:</strong> @reserva.NombreAutor</p>
-                <p><strong>Fecha de préstamo:</strong> @reserva.FechaPrestamo.ToShortDateString()</p>
-                <p><strong>Fecha de devolución:</strong> @reserva.FechaDevolucion.ToShortDateString()</p>
-                <p><strong>Estado:</strong> @(reserva.Activo ? "Activo" : "Inactivo")</p>
-                <hr />
-            </div>
-        }
-    </div>
-}
+    h3 {
+        color: #2d2d2d;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-size: 2rem;
+        background: linear-gradient(135deg, #404040, #606060);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .reservas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .reserva-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e0e0e0;
+    }
+
+    .reserva-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .reserva-header {
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .reserva-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #404040;
+        margin-bottom: 0.5rem;
+    }
+
+    .reserva-detail {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .reserva-label {
+        color: #606060;
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .reserva-value {
+        color: #2d2d2d;
+        font-weight: 400;
+        flex: 1;
+        text-align: right;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .status-active {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-inactive {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .loading-container {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f0f0f0;
+        border-top-color: #606060;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #606060;
+        font-size: 1.1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 2.5rem;
+        color: #e0e0e0;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="reservas-container">
+    <h3>Mis Reservas</h3>
+
+    @if (reservas == null)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Cargando tus reservas...</p>
+        </div>
+    }
+    else if (!reservas.Any())
+    {
+        <div class="empty-state">
+            <span class="bi bi-journal-x empty-state-icon"></span>
+            <p>No tienes reservas activas</p>
+        </div>
+    }
+    else
+    {
+        <div class="reservas-grid">
+            @foreach (var reserva in reservas)
+            {
+                <div class="reserva-card">
+                    <div class="reserva-header">
+                        <div class="reserva-title">@reserva.LibroNombre</div>
+                        <div class="reserva-detail">
+                            <span class="reserva-label">Autor:</span>
+                            <span class="reserva-value">@reserva.NombreAutor</span>
+                        </div>
+                    </div>
+
+                    <div class="reserva-detail">
+                        <span class="reserva-label">Préstamo:</span>
+                        <span class="reserva-value">@reserva.FechaPrestamo.ToShortDateString()</span>
+                    </div>
+
+                    <div class="reserva-detail">
+                        <span class="reserva-label">Devolución:</span>
+                        <span class="reserva-value">@reserva.FechaDevolucion.ToShortDateString()</span>
+                    </div>
+
+                    <div class="reserva-detail">
+                        <span class="reserva-label">Estado:</span>
+                        <span class="status-badge @(reserva.Activo ? "status-active" : "status-inactive")">
+                            @(reserva.Activo ? "Retirado" : "No retirado")
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
     private List<ReservaViewModel> reservas = new();

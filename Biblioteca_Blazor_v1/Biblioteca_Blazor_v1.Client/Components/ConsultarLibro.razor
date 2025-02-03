@@ -3,10 +3,113 @@
 @using BibliotecaDeClasesWinformYBlazor.Servicios
 @using BibliotecaDeClasesWinformYBlazor
 @inject LibroService LibroService
-@inject PrestamoService PrestamoService
+@inject NavigationManager Navigation
 
 <style>
-    /* ... (los estilos se mantienen igual) ... */
+    .consultar-libro-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h3 {
+        color: #2d2d2d;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 1.8rem;
+        background: linear-gradient(135deg, #404040, #606060);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .search-box {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background: #ffffff;
+    }
+
+        .form-control:focus {
+            border-color: #606060;
+            box-shadow: 0 0 0 3px rgba(96, 96, 96, 0.1);
+            transform: translateX(5px);
+        }
+
+    .book-results {
+        margin-top: 1rem;
+    }
+
+    .list-group-item {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+        .list-group-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #4a4a4a, #2d2d2d);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+            transform: scale(1.05);
+        }
+
+    .loading-container {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f0f0f0;
+        border-top-color: #606060;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+        border-radius: 8px;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
 </style>
 
 <div class="consultar-libro-container">
@@ -52,22 +155,11 @@
                                 </div>
                                 <div>
                                     <button class="btn btn-primary btn-sm"
-                                            @onclick="() => CheckAvailability(libro)">
-                                        Consultar disponibilidad
+                                            @onclick="() => VerDetalles(libro)">
+                                        <span class="bi bi-eye me-1"></span>Ver Libro
                                     </button>
                                 </div>
                             </div>
-                            @if (availabilityMessages.TryGetValue(libro.Id, out var message))
-                            {
-                                <div class="mt-2">
-                                    <span class="@GetAvailabilityClass(message)">
-                                        @message
-                                    </span>
-                                    <div class="text-muted mt-1">
-                                        <small>Estado actual: @(libro.BoolPrestado ? "Prestado" : "Disponible")</small>
-                                    </div>
-                                </div>
-                            }
                         </div>
                     }
                 </div>
@@ -85,7 +177,6 @@
 @code {
     private List<Libro> AllLibros = new List<Libro>();
     private List<Libro> FilteredLibros = new List<Libro>();
-    private Dictionary<int, string> availabilityMessages = new Dictionary<int, string>();
     private string SearchTerm = string.Empty;
     private bool isLoading = true;
 
@@ -98,8 +189,6 @@
 
     private void FilterLibros()
     {
-        availabilityMessages.Clear(); // Limpiar mensajes al cambiar la búsqueda
-
         if (string.IsNullOrWhiteSpace(SearchTerm))
         {
             FilteredLibros = AllLibros;
@@ -114,30 +203,9 @@
             .ToList();
     }
 
-    private async Task CheckAvailability(Libro libro)
+    private void VerDetalles(Libro libro)
     {
-        var prestamos = await PrestamoService.GetPrestamosAsync();
-
-        var prestamosActivos = prestamos
-            .Where(p => p.LibroId == libro.Id &&
-                       p.Activo &&
-                       !p.Eliminado &&
-                       p.FechaDevolucion >= DateTime.Today)
-            .ToList();
-
-        var disponible = !libro.BoolPrestado && !prestamosActivos.Any();
-
-        var message = disponible ?
-            "Disponible para alquiler" :
-            "No disponible - Actualmente en préstamo";
-
-        availabilityMessages[libro.Id] = message; // Almacenar en diccionario
-        StateHasChanged();
-    }
-
-    private string GetAvailabilityClass(string message)
-    {
-        return message.Contains("Disponible") ? "text-success fw-bold" : "text-danger fw-bold";
+        Navigation.NavigateTo($"/libro/{libro.Id}");
     }
 
     private void HandleSearch(ChangeEventArgs e)

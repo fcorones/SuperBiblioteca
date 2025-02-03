@@ -9,6 +9,119 @@
 
 <h3>Reservar Libro</h3>
 
+
+<style>
+    .reservar-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h3 {
+        color: #2d2d2d;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 1.8rem;
+        background: linear-gradient(135deg, #404040, #606060);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        background: #f8f8f8;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        background: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #606060;
+            box-shadow: 0 0 0 3px rgba(96, 96, 96, 0.1);
+        }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #606060, #404040);
+        color: white;
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        color: white;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+        color: white;
+        width: 100%;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+        font-size: 0.9rem;
+    }
+
+    .alert-danger {
+        background: #ffebee;
+        border: 1px solid #ffcdd2;
+        color: #c62828;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .calendar-container {
+        margin: 2rem 0;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 1rem;
+        background: #ffffff;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .spinner-border {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-width: 0.2em;
+        border-color: #606060;
+        border-right-color: transparent;
+    }
+</style>
+
+<div class="reservar-container">
+    <!-- El contenido existente se mantiene igual -->
+</div>
+
 @if (Libro == null)
 {
     <div class="text-center">
@@ -20,50 +133,47 @@
 }
 else
 {
-    <div class="form-group">
-        <label>Nombre del Libro</label>
-        <input type="text" class="form-control" value="@Libro.Titulo" readonly />
-    </div>
-
-    <!-- Modificar las visualizaciones de fecha -->
-    <div class="form-group">
-        <label>Fecha de Retiro seleccionada: </label>
-        <span>@(FechaRetiro?.ToShortDateString() ?? "No seleccionada")</span>
-    </div>
-
-    <div class="form-group">
-        <label>Fecha de Devolución seleccionada: </label>
-        <span>@(FechaDevolucion?.ToShortDateString() ?? "No seleccionada")</span>
-    </div>
-
-
-    <!-- Agregar este botón junto a los existentes -->
-    <div class="mt-3 mb-2">
-        <button class="btn btn-secondary" @onclick="ToggleSeleccion">
-            Seleccionar @(SeleccionandoRetiro ? "Devolución" : "Retiro")
-        </button>
-        <button class="btn btn-warning ms-2" @onclick="LimpiarSeleccion">
-            Limpiar Selección
-        </button>
-        <small class="text-muted">Actualmente eligiendo: @(SeleccionandoRetiro ? "Retiro" : "Devolución")</small>
-    </div>
-
-    <!-- Aquí usamos nuestro Calendar.razor -->
-    <Calendar 
-        CurrentDate="CurrentCalendarDate"
-        OccupiedDates="FechasOcupadas"
-        FechaRetiroSeleccionada="FechaRetiro"
-        FechaDevolucionSeleccionada="FechaDevolucion"
-        OnDateSelected="OnCalendarDateSelected" />
-
-    <button class="btn btn-primary mt-3" @onclick="Reservar">Reservar</button>
-
-    @if (!string.IsNullOrEmpty(MensajeError))
-    {
-        <div class="alert alert-danger mt-3">
-            @MensajeError
+    <div class="reservar-container">
+        <div class="form-group">
+            <label>Nombre del Libro</label>
+            <input type="text" class="form-control" value="@Libro.Titulo" readonly />
         </div>
-    }
+
+        <div class="form-group">
+            <label>Fecha de Retiro seleccionada: </label>
+            <span>@(FechaRetiro?.ToShortDateString() ?? "No seleccionada")</span>
+        </div>
+
+        <div class="form-group">
+            <label>Fecha de Devolución seleccionada: </label>
+            <span>@(FechaDevolucion?.ToShortDateString() ?? "No seleccionada")</span>
+        </div>
+
+        <div class="mt-3 mb-2">
+            
+            <button class="btn btn-warning ms-2" @onclick="LimpiarSeleccion">
+                Limpiar Selección
+            </button>
+           
+        </div>
+
+        <div class="calendar-container">
+            <Calendar CurrentDate="CurrentCalendarDate"
+                      OccupiedDates="FechasOcupadas"
+                      FechaRetiroSeleccionada="FechaRetiro"
+                      FechaDevolucionSeleccionada="FechaDevolucion"
+                      OnDateSelected="OnCalendarDateSelected" />
+        </div>
+
+        <button class="btn btn-primary mt-3" @onclick="Reservar">Reservar</button>
+
+        @if (!string.IsNullOrEmpty(MensajeError))
+        {
+            <div class="alert alert-danger mt-3">
+                @MensajeError
+            </div>
+        }
+    </div>
 }
 
 @code {
@@ -71,16 +181,13 @@ else
     public int LibroId { get; set; }
 
     private Libro Libro { get; set; }
-
-    // Fechas internas seleccionadas por el usuario
     private DateTime? FechaRetiro { get; set; }
     private DateTime? FechaDevolucion { get; set; }
-
-
-
-    private bool SeleccionandoRetiro { get; set; } = true; // Toggle para saber qué fecha se está eligiendo
+    private bool SeleccionandoRetiro { get; set; } = true;
     private DateTime currentCalendarDate = DateTime.Today;
-    // Si se desea empezar el calendario en la fecha actual
+    private string MensajeError { get; set; }
+    private List<DateTime> FechasOcupadas { get; set; } = new List<DateTime>();
+
     private DateTime CurrentCalendarDate
     {
         get => currentCalendarDate;
@@ -94,9 +201,6 @@ else
         }
     }
 
-    private string MensajeError { get; set; }
-    private List<DateTime> FechasOcupadas { get; set; } = new List<DateTime>();
-
     private void LimpiarSeleccion()
     {
         FechaRetiro = null;
@@ -109,15 +213,12 @@ else
     {
         try
         {
-            // 1) Obtener detalles del libro
             Libro = await LibroService.GetLibroByIdAsync(LibroId);
-
-            // 2) Obtener fechas ocupadas del libro
             await CargarFechasOcupadas();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error en obtener detalles del libro: {ex.Message}");
+            Console.WriteLine($"Error al cargar detalles: {ex.Message}");
         }
     }
 
@@ -126,9 +227,7 @@ else
         var prestamos = await PrestamoService.GetPrestamosAsync();
 
         var prestamosDelLibro = prestamos
-            .Where(p => p.LibroId == LibroId
-                        && !p.Eliminado    // Solo préstamos no eliminados
-                        && p.Activo)      // Y que estén activos
+            .Where(p => p.LibroId == LibroId && !p.Eliminado) // Solo considerar si no está eliminado
             .ToList();
 
         FechasOcupadas.Clear();
@@ -139,87 +238,93 @@ else
                 FechasOcupadas.Add(fecha);
             }
         }
-
-        Console.WriteLine($"Fechas ocupadas cargadas: {FechasOcupadas.Count}");
     }
 
-    private void ToggleSeleccion()
-    {
-        // Cambia entre elegir retiro o devolución
-        SeleccionandoRetiro = !SeleccionandoRetiro;
-    }
+    private void ToggleSeleccion() => SeleccionandoRetiro = !SeleccionandoRetiro;
 
-    // Este método se invoca cada vez que el usuario hace clic en un día del calendario
     private void OnCalendarDateSelected(DateTime date)
     {
         if (FechasOcupadas.Contains(date)) return;
 
-        // Actualizar el mes mostrado al seleccionar una fecha
         if (date.Month != CurrentCalendarDate.Month)
-        {
             CurrentCalendarDate = new DateTime(date.Year, date.Month, 1);
-        }
 
-        if (SeleccionandoRetiro)
+        if (FechaRetiro == null || (FechaRetiro != null && FechaDevolucion != null))
         {
+            // Si no hay fecha de retiro o si ambas fechas ya están seleccionadas, reiniciar la selección
             FechaRetiro = date;
+            FechaDevolucion = null;
         }
-        else
+        else if (date > FechaRetiro)
         {
+            // Si la fecha seleccionada es mayor a la de retiro, asignarla como devolución
             FechaDevolucion = date;
         }
+
+        StateHasChanged();
     }
+
 
     private async Task Reservar()
     {
-        // Validaciones
-        if (FechaRetiro < DateTime.Today)
-        {
-            MensajeError = "La fecha de retiro no puede ser anterior a hoy.";
-            return;
-        }
+        MensajeError = null;
 
-        if (FechaDevolucion < FechaRetiro)
-        {
-            MensajeError = "La fecha de devolución no puede ser anterior a la fecha de retiro.";
-            return;
-        }
+        if (!ValidarFechas()) return;
 
-        // Verificar que el UsuarioId sea válido
-        if (AuthContext.UserId <= 0)
-        {
-            MensajeError = "El UsuarioId no es válido.";
-            return;
-        }
-
-        bool haySolapamiento = FechasOcupadas
-        .Any(f => f >= FechaRetiro && f <= FechaDevolucion);
-
-        if (haySolapamiento)
-        {
-            MensajeError = "El libro no está disponible en las fechas seleccionadas";
-            return;
-        }
-
-        // Crear el objeto de préstamo
         var prestamo = new Prestamo
             {
                 Id = 0,
-                FechaPrestamo = FechaRetiro.Value, // Usar .Value para obtener el DateTime
-                FechaDevolucion = FechaDevolucion.Value, // Igual aquí
+                FechaPrestamo = FechaRetiro.Value,
+                FechaDevolucion = FechaDevolucion.Value,
                 UsuarioId = AuthContext.UserId,
                 LibroId = LibroId,
                 Activo = true,
                 Eliminado = false
             };
+
         try
         {
             await PrestamoService.CrearPrestamoAsync(prestamo);
-            Navigation.NavigateTo("/"); 
+            Navigation.NavigateTo("/");
         }
         catch (Exception ex)
         {
-            MensajeError = $"Error al reservar el libro: {ex.Message}";
+            MensajeError = $"Error al reservar: {ex.Message}";
         }
+    }
+
+    private bool ValidarFechas()
+    {
+        if (FechaRetiro == null || FechaDevolucion == null)
+        {
+            MensajeError = "Debe seleccionar ambas fechas";
+            return false;
+        }
+
+        if (FechaRetiro < DateTime.Today)
+        {
+            MensajeError = "La fecha de retiro no puede ser anterior a hoy.";
+            return false;
+        }
+
+        if (FechaDevolucion < FechaRetiro)
+        {
+            MensajeError = "La fecha de devolución debe ser posterior al retiro.";
+            return false;
+        }
+
+        if (FechasOcupadas.Any(f => f >= FechaRetiro && f <= FechaDevolucion))
+        {
+            MensajeError = "Existen fechas no disponibles en el rango seleccionado.";
+            return false;
+        }
+
+        if (AuthContext.UserId <= 0)
+        {
+            MensajeError = "Usuario no autenticado.";
+            return false;
+        }
+
+        return true;
     }
 }
