@@ -269,7 +269,7 @@ else
     {
         MensajeError = null;
 
-        if (!ValidarFechas()) return;
+        if (!await ValidarFechas()) return;
 
         var prestamo = new Prestamo
             {
@@ -293,7 +293,7 @@ else
         }
     }
 
-    private bool ValidarFechas()
+    private async Task<bool> ValidarFechas() // Cambiar a async Task<bool>
     {
         if (FechaRetiro == null || FechaDevolucion == null)
         {
@@ -322,6 +322,28 @@ else
         if (AuthContext.UserId <= 0)
         {
             MensajeError = "Usuario no autenticado.";
+            return false;
+        }
+
+        // Nueva validación de límite de reservas
+        try
+        {
+            var prestamosUsuario = await PrestamoService.GetPrestamosAsync();
+            var reservasActivas = prestamosUsuario
+                .Count(p => p.UsuarioId == AuthContext.UserId &&
+                          !p.Eliminado &&
+                          p.FechaDevolucion >= DateTime.Today);
+
+            if (reservasActivas >= 3)
+            {
+                MensajeError = "Límite de reservas alcanzado. Máximo 3 reservas activas permitidas.";
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            MensajeError = "Error al verificar reservas existentes.";
+            Console.WriteLine($"Error al obtener préstamos: {ex.Message}");
             return false;
         }
 
