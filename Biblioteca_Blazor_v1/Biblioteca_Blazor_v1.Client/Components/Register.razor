@@ -128,6 +128,14 @@
         background: rgba(0,0,0,0.03);
     }
 
+
+    .direccion-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
     /* Animaciones */
     @@keyframes cardEntrance {
         from {
@@ -145,6 +153,7 @@
         animation: cardEntrance 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
     }
 </style>
+
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -153,24 +162,28 @@
         <div class="card-body">
             <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
 
+                <!-- Eliminado el ValidationSummary -->
+                <!-- Nombre Completo -->
                 <div class="mb-3">
                     <label for="nombre" class="form-label">
                         <span class="bi bi-person-fill me-2"></span>Nombre Completo
                     </label>
-                    <InputText id="nombre" class="form-control" @bind-Value="registerModel.Nombre" />
+                    <InputText id="nombre" class="form-control" @bind-Value="registerModel.Nombre" maxlength="50" />
                     <ValidationMessage For="@(() => registerModel.Nombre)" />
                 </div>
 
+                <!-- Contraseña -->
                 <div class="mb-3">
                     <label for="password" class="form-label">
                         <span class="bi bi-lock-fill me-2"></span>Contraseña
                     </label>
-                    <InputText id="password" type="password" class="form-control" @bind-Value="Password" />
-                    <ValidationMessage For="@(() => Password)" />
+                    <InputText type="password" id="password" class="form-control"
+                               @bind-Value="registerModel.Password" maxlength="20" />
+                    <ValidationMessage For="@(() => registerModel.Password)" />
                 </div>
 
+                <!-- Email -->
                 <div class="mb-3">
                     <label for="email" class="form-label">
                         <span class="bi bi-envelope-fill me-2"></span>Email
@@ -179,19 +192,45 @@
                     <ValidationMessage For="@(() => registerModel.Email)" />
                 </div>
 
+                <!-- Nueva sección de Dirección -->
                 <div class="mb-3">
-                    <label for="direccion" class="form-label">
+                    <label class="form-label">
                         <span class="bi bi-house-door-fill me-2"></span>Dirección
                     </label>
-                    <InputText id="direccion" class="form-control" @bind-Value="registerModel.Direccion" />
-                    <ValidationMessage For="@(() => registerModel.Direccion)" />
+                    <div class="direccion-grid">
+                        <div>
+                            <InputText class="form-control" placeholder="Calle"
+                                       @bind-Value="registerModel.Calle" maxlength="50" />
+                            <ValidationMessage For="@(() => registerModel.Calle)" />
+                        </div>
+
+                        <div>
+                            <InputText class="form-control" placeholder="Altura"
+                                       @bind-Value="registerModel.Altura" maxlength="10" />
+                            <ValidationMessage For="@(() => registerModel.Altura)" />
+                        </div>
+
+                        <div>
+                            <InputText class="form-control" placeholder="Ciudad"
+                                       @bind-Value="registerModel.Ciudad" maxlength="50" />
+                            <ValidationMessage For="@(() => registerModel.Ciudad)" />
+                        </div>
+
+                        <div>
+                            <InputText class="form-control" placeholder="Provincia"
+                                       @bind-Value="registerModel.Provincia" maxlength="50" />
+                            <ValidationMessage For="@(() => registerModel.Provincia)" />
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Teléfono -->
                 <div class="mb-3">
                     <label for="telefono" class="form-label">
                         <span class="bi bi-telephone-fill me-2"></span>Teléfono
                     </label>
-                    <InputText id="telefono" class="form-control" @bind-Value="registerModel.Telefono" />
+                    <InputText id="telefono" class="form-control"
+                               @bind-Value="registerModel.Telefono" maxlength="15" />
                     <ValidationMessage For="@(() => registerModel.Telefono)" />
                 </div>
 
@@ -211,41 +250,85 @@
 </div>
 
 @code {
-    private Usuario registerModel = new Usuario();
-    private string Password { get; set; } = string.Empty;
+    private RegisterModel registerModel = new RegisterModel();
     private string errorMessage = string.Empty;
+
+    public class RegisterModel
+    {
+        // Propiedades existentes
+        [Required(ErrorMessage = "El nombre es obligatorio")]
+        [MinLength(4, ErrorMessage = "Mínimo 4 caracteres")]
+        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", ErrorMessage = "Solo letras y espacios")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El teléfono es obligatorio")]
+        [RegularExpression(@"^\d+$", ErrorMessage = "Solo números permitidos")]
+        public string Telefono { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es obligatoria")]
+        [MinLength(7, ErrorMessage = "Mínimo 7 caracteres")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El email es obligatorio")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido")]
+        public string Email { get; set; } = string.Empty;
+
+        // Nuevas propiedades para la dirección
+        [Required(ErrorMessage = "La calle es obligatoria")]
+        [MinLength(2, ErrorMessage = "Mínimo 2 caracteres")]
+        [RegularExpression(@"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ .-]+$", ErrorMessage = "Caracteres no válidos")]
+        public string Calle { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La altura es obligatoria")]
+        [MinLength(2, ErrorMessage = "Mínimo 2 caracteres")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Solo números permitidos")]
+        public string Altura { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La ciudad es obligatoria")]
+        [MinLength(5, ErrorMessage = "Mínimo 5 caracteres")]
+        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", ErrorMessage = "Solo letras y espacios")]
+        public string Ciudad { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La provincia es obligatoria")]
+        [MinLength(5, ErrorMessage = "Mínimo 5 caracteres")]
+        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", ErrorMessage = "Solo letras y espacios")]
+        public string Provincia { get; set; } = string.Empty;
+    }
 
     private async Task HandleRegister()
     {
         try
         {
-            // Asignar valores adicionales al modelo
-            registerModel.RolNombre = "USUARIO";
-            registerModel.Eliminado = false;
-            registerModel.ContraseñaHasheada = Password;
+            // Combinar la dirección
+            var direccionCompleta = $"{registerModel.Calle} {registerModel.Altura}, {registerModel.Ciudad}, {registerModel.Provincia}";
 
-            // Llamar al servicio para crear el usuario
-            var response = await UsuarioService.CrearUsuarioAsync(registerModel);
+            var usuario = new Usuario
+                {
+                    Nombre = registerModel.Nombre,
+                    Telefono = registerModel.Telefono,
+                    Email = registerModel.Email,
+                    Direccion = direccionCompleta,
+                    RolNombre = "USUARIO",
+                    Eliminado = false,
+                    ContraseñaHasheada = registerModel.Password
+                };
+
+            var response = await UsuarioService.CrearUsuarioAsync(usuario);
 
             if (response.IsSuccessStatusCode)
             {
-                // Mostrar mensaje emergente de registro exitoso
-                await JSRuntime.InvokeVoidAsync("alert", "Registro exitoso");
-
-                // Redirigir a la página principal
+                await JSRuntime.InvokeVoidAsync("alert", "¡Registro exitoso!");
                 NavigationManager.NavigateTo("/", forceLoad: true);
             }
             else
             {
-                // Mostrar mensaje de error si el registro falla
                 var errorResponse = await response.Content.ReadAsStringAsync();
-                errorMessage = $"Error al registrar usuario: {errorResponse}";
+                errorMessage = $"Error al registrar: {errorResponse}";
             }
         }
         catch (Exception ex)
         {
-            // Manejar errores inesperados
-            errorMessage = $"Ocurrió un error inesperado: {ex.Message}";
+            errorMessage = $"Error: {ex.Message}";
         }
     }
 }
