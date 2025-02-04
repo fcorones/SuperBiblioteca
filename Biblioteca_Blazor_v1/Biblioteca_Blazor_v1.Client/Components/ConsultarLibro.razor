@@ -6,8 +6,24 @@
 @inject NavigationManager Navigation
 
 <style>
+
+    .btn-ver-libro {
+        background: linear-gradient(135deg, #4a4a4a, #2d2d2d);
+        border: none;
+        border-radius: 8px;
+        color: white !important;
+        padding: 0.5rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-ver-libro:hover {
+            background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
     .consultar-libro-container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 2rem auto;
         padding: 0 1rem;
         font-family: 'Poppins', sans-serif;
@@ -22,6 +38,109 @@
         background: linear-gradient(135deg, #404040, #606060);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+    }
+
+    .main-container {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .filters-section {
+        flex: 0 0 300px;
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        height: fit-content;
+    }
+
+    .content-section {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .filter-group {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8f8f8;
+        border-radius: 8px;
+    }
+
+    .filter-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #404040;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .select-filter {
+        width: 100%;
+        padding: 0.5rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        background: white;
+        margin-bottom: 0.5rem;
+    }
+
+    .year-inputs {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .year-input {
+        width: 100px;
+        padding: 0.5rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+    }
+
+    .genre-list {
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .genre-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+    }
+
+        .genre-item:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+    .filter-badge {
+        background: #e0e0e0;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.25rem;
+    }
+
+        .filter-badge button {
+            background: none;
+            border: none;
+            padding: 0;
+            color: #606060;
+            cursor: pointer;
+        }
+
+    .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
     }
 
     .search-box {
@@ -43,73 +162,7 @@
         .form-control:focus {
             border-color: #606060;
             box-shadow: 0 0 0 3px rgba(96, 96, 96, 0.1);
-            transform: translateX(5px);
         }
-
-    .book-results {
-        margin-top: 1rem;
-    }
-
-    .list-group-item {
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-        .list-group-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #4a4a4a, #2d2d2d);
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
-            transform: scale(1.05);
-        }
-
-    .loading-container {
-        text-align: center;
-        padding: 2rem;
-    }
-
-    .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f0f0f0;
-        border-top-color: #606060;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
-    }
-
-    @@keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    .alert-warning {
-        background: #fff3cd;
-        border-color: #ffeeba;
-        color: #856404;
-        border-radius: 8px;
-    }
-
-    .text-muted {
-        color: #6c757d !important;
-    }
 
     .book-card {
         display: flex;
@@ -159,9 +212,24 @@
         justify-content: flex-end;
     }
 
+    .alert-warning {
+        background: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+        border-radius: 8px;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
     @@media (max-width: 768px) {
-        .book-card {
-            flex-wrap: wrap;
+        .main-container {
+            flex-direction: column;
+        }
+
+        .filters-section {
+            width: 100%;
         }
 
         .book-cover-container {
@@ -180,87 +248,178 @@
 <div class="consultar-libro-container">
     <h3>Consultar Libro</h3>
 
-    <div class="search-box">
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <input type="text" class="form-control" @bind="SearchTerm"
+    <div class="main-container">
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <div class="filter-title">
+                    <i class="bi bi-funnel"></i>
+                    Filtros básicos
+                </div>
+                <select class="select-filter" @bind="SelectedEditorial">
+                    <option value="">Todas las editoriales</option>
+                    @foreach (var editorial in AllEditoriales)
+                    {
+                        <option value="@editorial">@editorial</option>
+                    }
+                </select>
+
+                <select class="select-filter" @bind="SelectedAutor">
+                    <option value="">Todos los autores</option>
+                    @foreach (var autor in AllAutores)
+                    {
+                        <option value="@autor">@autor</option>
+                    }
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">
+                    <i class="bi bi-calendar-range"></i>
+                    Año de publicación
+                </div>
+                <div class="year-inputs">
+                    <input type="number" class="year-input"
+                           placeholder="Desde"
+                           @bind="MinYear"
+                           @oninput="(_ => FilterLibros())" />
+
+                    <input type="number" class="year-input"
+                           placeholder="Hasta"
+                           @bind="MaxYear"
+                           @oninput="(_ => FilterLibros())" />
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">
+                    <i class="bi bi-tags"></i>
+                    Géneros literarios
+                </div>
+                <div class="genre-list">
+                    @foreach (var genero in AllGeneros)
+                    {
+                        <div class="genre-item">
+                            <input type="checkbox" id="@genero"
+                                   checked="@SelectedGeneros.Contains(genero)"
+                                   @onchange="e => ToggleGenero(genero, e.Value)" />
+                            <label for="@genero">@genero</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="content-section">
+            <div class="active-filters">
+                @foreach (var genre in SelectedGeneros)
+                {
+                    <div class="filter-badge">
+                        <span>@genre</span>
+                        <button @onclick="() => RemoveGenreFilter(genre)">×</button>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(SelectedEditorial))
+                {
+                    <div class="filter-badge">
+                        <span>Editorial: @SelectedEditorial</span>
+                        <button @onclick="() => SelectedEditorial = null">×</button>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(SelectedAutor))
+                {
+                    <div class="filter-badge">
+                        <span>Autor: @SelectedAutor</span>
+                        <button @onclick="() => SelectedAutor = null">×</button>
+                    </div>
+                }
+                @if (MinYear.HasValue || MaxYear.HasValue)
+                {
+                    <div class="filter-badge">
+                        <span>Año: @(MinYear?.ToString() ?? "") - @(MaxYear?.ToString() ?? "")</span>
+                        <button @onclick="ClearYearFilter">×</button>
+                    </div>
+                }
+            </div>
+
+            <div class="search-box">
+                <input type="text" class="form-control"
+                       @bind="SearchTerm"
                        placeholder="Buscar por título (español u original)"
                        @oninput="HandleSearch" />
             </div>
-        </div>
-    </div>
 
-    @if (isLoading)
-    {
-        <div class="text-center mt-3">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando...</span>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="book-results">
-            @if (FilteredLibros.Any())
+            @if (isLoading)
             {
-                <div class="list-group">
-                    @foreach (var libro in FilteredLibros)
-                    {
-                        <div class="list-group-item book-card">
-                            <!-- Carátula del libro -->
-                            <div class="book-cover-container">
-                                @if (!string.IsNullOrEmpty(libro.PortadaUrl))
-                                {
-                                    <img src="@libro.PortadaUrl"
-                                         alt="Portada de @libro.TituloEspaniol"
-                                         class="book-cover" />
-                                }
-                                else
-                                {
-                                    <div class="book-cover placeholder">
-                                        <i class="bi bi-book"></i>
-                                    </div>
-                                }
-                            </div>
-
-                            <!-- Información del libro -->
-                            <div class="book-info">
-                                <h5 class="book-title">@libro.TituloEspaniol</h5>
-                                <div class="book-details">
-                                    <div>
-                                        <span class="text-muted">Título original:</span>
-                                        @libro.Titulo
-                                    </div>
-                                    <div>
-                                        <span class="text-muted">Editorial:</span>
-                                        @libro.NombreEditorial
-                                    </div>
-                                    <div>
-                                        <span class="text-muted">Año:</span>
-                                        @(libro.AnioDePublicacion?.ToString() ?? "N/D")
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Botón de acción -->
-                            <div class="book-actions">
-                                <button class="btn btn-primary btn-sm"
-                                        @onclick="() => VerDetalles(libro)">
-                                    <span class="bi bi-eye me-1"></span>Ver Libro
-                                </button>
-                            </div>
-                        </div>
-                    }
+                <div class="text-center mt-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
                 </div>
             }
             else
             {
-                <div class="alert alert-warning mt-3">
-                    No se encontraron libros con ese criterio de búsqueda
+                <div class="book-results">
+                    @if (FilteredLibros.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var libro in FilteredLibros)
+                            {
+                                <div class="list-group-item book-card" @key="libro.Id">
+                                    <div class="book-cover-container">
+                                        @if (!string.IsNullOrEmpty(libro.PortadaUrl))
+                                        {
+                                            <img src="@libro.PortadaUrl"
+                                                 alt="Portada de @libro.TituloEspaniol"
+                                                 class="book-cover" />
+                                        }
+                                        else
+                                        {
+                                            <div class="book-cover placeholder">
+                                                <i class="bi bi-book"></i>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div class="book-info">
+                                        <h5 class="book-title">@libro.TituloEspaniol</h5>
+                                        <div class="book-details">
+                                            <div>
+                                                <span class="text-muted">Título original:</span>
+                                                @libro.Titulo
+                                            </div>
+                                            <div>
+                                                <span class="text-muted">Editorial:</span>
+                                                @libro.NombreEditorial
+                                            </div>
+                                            <div>
+                                                <span class="text-muted">Año:</span>
+                                                @(libro.AnioDePublicacion?.ToString() ?? "N/D")
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="book-actions">
+                                        <button class="btn btn-ver-libro btn-sm"
+                                                @onclick="() => VerDetalles(libro)">
+                                            <span class="bi bi-eye me-1"></span>Ver Libro
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning mt-3">
+                            No se encontraron libros con ese criterio de búsqueda
+                        </div>
+                    }
                 </div>
             }
         </div>
-    }
+    </div>
 </div>
 
 @code {
@@ -269,37 +428,139 @@
     private string SearchTerm = string.Empty;
     private bool isLoading = true;
 
+    // Filtros
+    private List<string> AllEditoriales = new List<string>();
+    private List<string> AllAutores = new List<string>();
+    private List<string> AllGeneros = new List<string>();
+    private string SelectedEditorial;
+    private string SelectedAutor;
+    private List<string> SelectedGeneros = new List<string>();
+    private int? _minYear;
+    private int? _maxYear;
+
+    private int? MinYear
+    {
+        get => _minYear;
+        set
+        {
+            _minYear = value;
+            FilterLibros();
+        }
+    }
+
+    private int? MaxYear
+    {
+        get => _maxYear;
+        set
+        {
+            _maxYear = value;
+            FilterLibros();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        AllLibros = await LibroService.GetLibrosAsync();
+        // Cargar libros no eliminados
+        AllLibros = (await LibroService.GetLibrosAsync()).Where(l => !l.Eliminado).ToList();
+
+        // Cargar datos para filtros
+        AllEditoriales = AllLibros
+            .Where(l => !string.IsNullOrEmpty(l.NombreEditorial))
+            .Select(l => l.NombreEditorial)
+            .Distinct()
+            .OrderBy(e => e)
+            .ToList();
+
+        AllAutores = AllLibros
+            .Where(l => !string.IsNullOrEmpty(l.NombreAutor))
+            .Select(l => l.NombreAutor)
+            .Distinct()
+            .OrderBy(a => a)
+            .ToList();
+
+        AllGeneros = AllLibros
+            .SelectMany(l => l.NombresGeneros)
+            .Where(g => !string.IsNullOrEmpty(g))
+            .Distinct()
+            .OrderBy(g => g)
+            .ToList();
+
         FilterLibros();
         isLoading = false;
     }
 
     private void FilterLibros()
     {
-        if (string.IsNullOrWhiteSpace(SearchTerm))
+        var query = AllLibros.AsEnumerable();
+
+        // Aplicar filtro de búsqueda
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
         {
-            FilteredLibros = AllLibros;
-            return;
+            var term = SearchTerm.Trim().ToLower();
+            query = query.Where(l =>
+                (l.Titulo?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (l.TituloEspaniol?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false));
         }
 
-        var term = SearchTerm.Trim().ToLower();
-        FilteredLibros = AllLibros
-            .Where(l =>
-                (l.Titulo?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (l.TituloEspaniol?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false))
-            .ToList();
+        // Filtro por editorial
+        if (!string.IsNullOrEmpty(SelectedEditorial))
+            query = query.Where(l => l.NombreEditorial == SelectedEditorial);
+
+        // Filtro por autor
+        if (!string.IsNullOrEmpty(SelectedAutor))
+            query = query.Where(l => l.NombreAutor == SelectedAutor);
+
+        // Filtro por géneros
+        if (SelectedGeneros.Any())
+            query = query.Where(l => SelectedGeneros.All(g => l.NombresGeneros.Contains(g)));
+
+        // Filtro por rango de años (corregido)
+        if (MinYear.HasValue)
+            query = query.Where(l => l.AnioDePublicacion.HasValue && l.AnioDePublicacion.Value >= MinYear.Value);
+
+        if (MaxYear.HasValue)
+            query = query.Where(l => l.AnioDePublicacion.HasValue && l.AnioDePublicacion.Value <= MaxYear.Value);
+
+        // Actualizar lista filtrada
+        FilteredLibros = query.ToList();
     }
 
-    private void VerDetalles(Libro libro)
+
+    private void ToggleGenero(string genero, object isChecked)
     {
-        Navigation.NavigateTo($"/libro/{libro.Id}");
+        if ((bool)isChecked)
+        {
+            if (!SelectedGeneros.Contains(genero))
+                SelectedGeneros.Add(genero);
+        }
+        else
+        {
+            SelectedGeneros.Remove(genero);
+        }
+        FilterLibros();
+    }
+
+    private void RemoveGenreFilter(string genero)
+    {
+        SelectedGeneros.Remove(genero);
+        FilterLibros();
+    }
+
+    private void ClearYearFilter()
+    {
+        MinYear = null;
+        MaxYear = null;
+        FilterLibros();
     }
 
     private void HandleSearch(ChangeEventArgs e)
     {
         SearchTerm = e.Value?.ToString() ?? string.Empty;
         FilterLibros();
+    }
+
+    private void VerDetalles(Libro libro)
+    {
+        Navigation.NavigateTo($"/libro/{libro.Id}");
     }
 }
