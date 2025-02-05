@@ -27,6 +27,11 @@ builder.Services.AddScoped<UsuarioService>(sp =>
     return new UsuarioService(authContext);
 });
 
+builder.Services.AddHttpClient<IGeorefService, GeorefService>(client =>
+{
+    client.BaseAddress = new Uri("https://apis.datos.gob.ar/georef/api/");
+});
+
 builder.Services.AddSyncfusionBlazor();
 
 var host = builder.Build();
