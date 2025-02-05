@@ -5,6 +5,35 @@
 @inject NavigationManager Navigation
 @inject AuthContext AuthContext
 
+
+<style>
+    
+    .btn-ver-libro {
+        background: linear-gradient(135deg, #4a4a4a, #2d2d2d);
+        border: none;
+        border-radius: 8px;
+        color: white !important;
+        padding: 0.5rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-ver-libro:hover {
+            background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    .text-muted {
+        color: #6c757d !important;
+        font-style: italic;
+    }
+
+    .bi-info-circle {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+</style>
+
 <div class="container my-5">
     <div class="card shadow card-libro-detalle">
         <div class="card-body p-5">
@@ -46,7 +75,15 @@
                 @if (!string.IsNullOrEmpty(AuthContext.UserToken))
                 {
                     <div class="text-center mt-4">
-                        <button class="btn btn-primary" @onclick="ReservarLibro">Reservar Libro</button>
+                        <button class="btn btn-ver-libro" @onclick="ReservarLibro">Reservar Libro</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center mt-4">
+                        <p class="text-muted" style="font-size: 0.9rem;">
+                            <i class="bi bi-info-circle me-2"></i>Inicie sesión para reservar este libro.
+                        </p>
                     </div>
                 }
             }
