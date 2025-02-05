@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject AuthContext AuthContext
 @inject UsuarioService UsuarioService
+@inject IGeorefService GeorefService
 @using BibliotecaDeClasesWinformYBlazor.Models
 @using BibliotecaDeClasesWinformYBlazor
 @using BibliotecaDeClasesWinformYBlazor.Servicios
@@ -17,7 +18,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: white;
     }
 
     .card {
@@ -25,11 +25,16 @@
         border-radius: 15px;
         overflow: hidden;
         width: 100%;
-        max-width: 500px;
+        max-width: 600px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         background: #ffffff;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
 
     .card-header {
         background: linear-gradient(135deg, #2d2d2d, #404040);
@@ -85,17 +90,6 @@
             transform: scale(1.02);
         }
 
-    .btn-outline-secondary {
-        border: 2px solid #4a4a4a;
-        color: #4a4a4a;
-        transition: all 0.3s ease;
-    }
-
-        .btn-outline-secondary:hover {
-            background: #4a4a4a;
-            color: white;
-        }
-
     /* Iconos */
     .bi {
         color: #606060;
@@ -125,9 +119,8 @@
 
     /* Efectos hover */
     .nav-link:hover {
-        background: rgba(0,0,0,0.03);
+        background: rgba(0, 0, 0, 0.03);
     }
-
 
     .direccion-grid {
         display: grid;
@@ -163,7 +156,6 @@
             <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
                 <DataAnnotationsValidator />
 
-                <!-- Eliminado el ValidationSummary -->
                 <!-- Nombre Completo -->
                 <div class="mb-3">
                     <label for="nombre" class="form-label">
@@ -192,34 +184,60 @@
                     <ValidationMessage For="@(() => registerModel.Email)" />
                 </div>
 
-                <!-- Nueva sección de Dirección -->
+                <!-- Dirección -->
                 <div class="mb-3">
                     <label class="form-label">
                         <span class="bi bi-house-door-fill me-2"></span>Dirección
                     </label>
                     <div class="direccion-grid">
+                        <!-- Calle -->
                         <div>
                             <InputText class="form-control" placeholder="Calle"
                                        @bind-Value="registerModel.Calle" maxlength="50" />
                             <ValidationMessage For="@(() => registerModel.Calle)" />
                         </div>
 
+                        <!-- Altura -->
                         <div>
                             <InputText class="form-control" placeholder="Altura"
                                        @bind-Value="registerModel.Altura" maxlength="10" />
                             <ValidationMessage For="@(() => registerModel.Altura)" />
                         </div>
 
+                        <!-- Provincia -->
                         <div>
-                            <InputText class="form-control" placeholder="Ciudad"
-                                       @bind-Value="registerModel.Ciudad" maxlength="50" />
-                            <ValidationMessage For="@(() => registerModel.Ciudad)" />
+                            <label class="form-label">Provincia</label>
+                            <InputSelect @bind-Value="registerModel.Provincia" class="form-control" @oninput="async (e) => await ProvinciaSeleccionada(e)">
+                                <option value="">Seleccione una provincia</option>
+                                @foreach (var provincia in provincias)
+                                {
+                                    <option value="@provincia.Nombre">@provincia.Nombre</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => registerModel.Provincia)" />
                         </div>
 
+                        <!-- Ciudad -->
                         <div>
-                            <InputText class="form-control" placeholder="Provincia"
-                                       @bind-Value="registerModel.Provincia" maxlength="50" />
-                            <ValidationMessage For="@(() => registerModel.Provincia)" />
+                            <label class="form-label">Ciudad</label>
+                            @if (cargandoCiudades)
+                            {
+                                <div class="form-control">
+                                    <span class="spinner-border spinner-border-sm"></span> Cargando ciudades...
+                                </div>
+                            }
+                            else
+                            {
+                                <InputSelect @bind-Value="registerModel.Ciudad" class="form-control"
+                                             disabled="@(string.IsNullOrEmpty(registerModel.Provincia))">
+                                    <option value="">Seleccione una ciudad</option>
+                                    @foreach (var ciudad in ciudades)
+                                    {
+                                        <option value="@ciudad.Nombre">@ciudad.Nombre</option>
+                                    }
+                                </InputSelect>
+                            }
+                            <ValidationMessage For="@(() => registerModel.Ciudad)" />
                         </div>
                     </div>
                 </div>
@@ -252,10 +270,51 @@
 @code {
     private RegisterModel registerModel = new RegisterModel();
     private string errorMessage = string.Empty;
+    private List<Provincia> provincias = new();
+    private List<Ciudad> ciudades = new();
+    private bool cargandoCiudades = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        provincias = await GeorefService.ObtenerProvincias();
+        provincias = provincias.OrderBy(p => p.Nombre).ToList();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task ProvinciaSeleccionada(ChangeEventArgs e)
+    {
+        var provinciaNombre = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(provinciaNombre))
+        {
+            cargandoCiudades = true;
+            try
+            {
+                ciudades = await GeorefService.ObtenerCiudadesPorProvincia(provinciaNombre);
+                if (ciudades == null || !ciudades.Any())
+                {
+                    Console.WriteLine("No se encontraron ciudades para la provincia seleccionada.");
+                }
+                ciudades = ciudades.OrderBy(c => c.Nombre).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar ciudades: {ex.Message}");
+                ciudades = new List<Ciudad>();
+            }
+            finally
+            {
+                cargandoCiudades = false;
+            }
+            StateHasChanged();
+        }
+        else
+        {
+            ciudades = new List<Ciudad>();
+        }
+    }
 
     public class RegisterModel
     {
-        // Propiedades existentes
         [Required(ErrorMessage = "El nombre es obligatorio")]
         [MinLength(4, ErrorMessage = "Mínimo 4 caracteres")]
         [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", ErrorMessage = "Solo letras y espacios")]
@@ -273,7 +332,6 @@
         [EmailAddress(ErrorMessage = "Formato de email inválido")]
         public string Email { get; set; } = string.Empty;
 
-        // Nuevas propiedades para la dirección
         [Required(ErrorMessage = "La calle es obligatoria")]
         [MinLength(2, ErrorMessage = "Mínimo 2 caracteres")]
         [RegularExpression(@"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ .-]+$", ErrorMessage = "Caracteres no válidos")]
@@ -284,15 +342,11 @@
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Solo números permitidos")]
         public string Altura { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "La ciudad es obligatoria")]
-        [MinLength(5, ErrorMessage = "Mínimo 5 caracteres")]
-        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", ErrorMessage = "Solo letras y espacios")]
-        public string Ciudad { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "La provincia es obligatoria")]
-        [MinLength(5, ErrorMessage = "Mínimo 5 caracteres")]
-        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", ErrorMessage = "Solo letras y espacios")]
         public string Provincia { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La ciudad es obligatoria")]
+        public string Ciudad { get; set; } = string.Empty;
     }
 
     private async Task HandleRegister()
