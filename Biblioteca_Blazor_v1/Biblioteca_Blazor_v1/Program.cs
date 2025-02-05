@@ -35,7 +35,6 @@ builder.Services.AddScoped<UsuarioService>(sp =>
     return new UsuarioService(authContext);
 });
 
-builder.Services.AddHttpClient<IGeorefService, GeorefService>();
 
 builder.Services.AddSyncfusionBlazor();
 // Registrar MudBlazor
