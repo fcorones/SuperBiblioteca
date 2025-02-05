@@ -60,23 +60,28 @@
     }
 
     .reserva-detail {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.75rem;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    min-height: 24px; /* Asegura que todas las filas tengan la misma altura */
+}
 
-    .reserva-label {
-        color: #606060;
-        font-weight: 500;
-        flex: 1;
-    }
+.reserva-label {
+    color: #606060;
+    font-weight: 500;
+    flex: 1;
+    min-width: 100px; /* Evita que los textos largos desplacen otros elementos */
+}
 
-    .reserva-value {
-        color: #2d2d2d;
-        font-weight: 400;
-        flex: 1;
-        text-align: right;
-    }
+.reserva-value {
+    color: #2d2d2d;
+    font-weight: 400;
+    flex: 2;
+    text-align: right;
+    min-height: 24px; /* Unifica la altura de los valores */
+    word-break: break-word; /* Evita que palabras largas desborden */
+}
 
     .status-badge {
         display: inline-block;
@@ -159,6 +164,15 @@
                             <span class="reserva-label">Autor:</span>
                             <span class="reserva-value">@reserva.NombreAutor</span>
                         </div>
+                        <div class="reserva-detail">
+                            <span class="reserva-label">Editorial:</span>
+                            <span class="reserva-value">@reserva.NombreEditorial</span>
+                        </div>
+
+                        <div class="reserva-detail">
+                            <span class="reserva-label">Año de Publicación:</span>
+                            <span class="reserva-value">@reserva.AnioDePublicacion</span>
+                        </div>
                     </div>
 
                     <div class="reserva-detail">
@@ -210,18 +224,26 @@
             Console.WriteLine($"[MisReservas] Libros cargados: {libros?.Count ?? 0}");
 
             // Filtrar los préstamos del usuario logeado
-            reservas = prestamos?
-                .Where(p => p.UsuarioId == usuarioId && !p.Eliminado) // Excluir préstamos eliminados
-                .Select(p => new ReservaViewModel
-                    {
-                        Id = p.Id,
-                        FechaPrestamo = p.FechaPrestamo,
-                        FechaDevolucion = p.FechaDevolucion,
-                        Activo = p.Activo,
-                        LibroNombre = libros?.FirstOrDefault(l => l.Id == p.LibroId)?.Titulo ?? "Desconocido",
-                        NombreAutor = libros?.FirstOrDefault(l => l.Id == p.LibroId)?.NombreAutor ?? "Desconocido"
-                    })
+                 reservas = prestamos?
+                .Where(p => p.UsuarioId == usuarioId && !p.Eliminado)
+                .Select(p =>
+                {
+                    var libro = libros?.FirstOrDefault(l => l.Id == p.LibroId);
+                    return new ReservaViewModel
+                        {
+                            Id = p.Id,
+                            FechaPrestamo = p.FechaPrestamo,
+                            FechaDevolucion = p.FechaDevolucion,
+                            Activo = p.Activo,
+                            LibroNombre = libro?.Titulo ?? "Desconocido",
+                            NombreAutor = libro?.NombreAutor ?? "Desconocido",
+                            AnioDePublicacion = libro?.AnioDePublicacion.ToString() ?? "Desconocido",
+                            NombreEditorial = libro?.NombreEditorial ?? "Desconocido"
+
+                        };
+                })
                 .ToList();
+
 
             Console.WriteLine($"[MisReservas] Reservas filtradas: {reservas.Count}");
         }
@@ -239,5 +261,8 @@
         public bool Activo { get; set; }
         public string LibroNombre { get; set; }
         public string NombreAutor { get; set; }
+        public string AnioDePublicacion { get; set; }
+        public string NombreEditorial { get; set; }
+
     }
 }
