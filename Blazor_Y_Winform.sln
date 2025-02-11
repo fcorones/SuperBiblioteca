@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Blazor_v1.Client
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BibliotecaDeClasesWinformYBlazor", "BibliotecaDeClasesWinformYBlazor\BibliotecaDeClasesWinformYBlazor.csproj", "{C8935161-04B2-4877-9227-7AD9999857CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Winform_v1", "..\..\Users\alvar\OneDrive\Escritorio\TP-Seminario-1\v2 modificaciones\tp 27-01-2025\Biblioteca_Winform_v1\Biblioteca_Winform_v1\Biblioteca_Winform_v1.csproj", "{2921A87E-F21D-44D3-B494-1F9F69AAC190}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Winform_v1", "Biblioteca_Winform_v1\Biblioteca_Winform_v1.csproj", "{DCAD9C5A-4823-40C7-A201-63620B2AEBB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{C8935161-04B2-4877-9227-7AD9999857CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8935161-04B2-4877-9227-7AD9999857CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8935161-04B2-4877-9227-7AD9999857CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCAD9C5A-4823-40C7-A201-63620B2AEBB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCAD9C5A-4823-40C7-A201-63620B2AEBB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCAD9C5A-4823-40C7-A201-63620B2AEBB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCAD9C5A-4823-40C7-A201-63620B2AEBB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
