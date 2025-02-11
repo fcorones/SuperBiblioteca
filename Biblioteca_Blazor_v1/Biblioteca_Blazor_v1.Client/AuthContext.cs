@@ -2,20 +2,24 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BibliotecaDeClasesWinformYBlazor;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+
 
 public class AuthContext : IAuthContext
 {
     private readonly IJSRuntime _jsRuntime;
+    private readonly NavigationManager _navigationManager;
     private string _userToken;
     private string _userName;
     private int _userId;
     private bool _isInitialized = false;
     public event Action OnChange;
 
-    public AuthContext(IJSRuntime jsRuntime)
+    public AuthContext(IJSRuntime jsRuntime, NavigationManager navigationManager)
     {
         _jsRuntime = jsRuntime;
+        _navigationManager = navigationManager;
     }
 
     public string UserToken
@@ -34,15 +38,15 @@ public class AuthContext : IAuthContext
     public string UserName => _userName;
     public int UserId => _userId;
 
+    private Timer _expirationTimer;
+
     private void ExtractUserInfo()
     {
         Console.WriteLine("[AuthContext] Ejecutando ExtractUserInfo()");
 
         if (string.IsNullOrEmpty(_userToken))
         {
-            Console.WriteLine("[AuthContext] No hay token. Reseteando UserName y UserId.");
-            _userName = string.Empty;
-            _userId = 0;
+            ResetUserInfo();
             return;
         }
 
@@ -54,15 +58,65 @@ public class AuthContext : IAuthContext
             _userName = token.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value ?? "Usuario";
             _userId = int.Parse(token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? "0");
 
-            Console.WriteLine($"[AuthContext] Nombre extraído del token: {_userName}");
-            Console.WriteLine($"[AuthContext] UserId extraído del token: {_userId}");
+           
+            var expirationTime = token.ValidTo;
+            ScheduleExpirationCheck(expirationTime);
+
+            Console.WriteLine($"[AuthContext] Nombre: {_userName}, ID: {_userId}, Expira: {expirationTime}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[AuthContext] Error al leer el token: {ex.Message}");
+            Console.WriteLine($"[AuthContext] Error: {ex.Message}");
+            ResetUserInfo();
         }
     }
 
+    private void ScheduleExpirationCheck(DateTime expirationTime)
+    {
+        _expirationTimer?.Dispose();
+
+        var timeUntilExpiration = expirationTime - DateTime.UtcNow;
+
+        if (timeUntilExpiration <= TimeSpan.Zero)
+        {
+            // Token ya expirado
+            HandleTokenExpired();
+        }
+        else
+        {
+            // Programar chequeo de expiración
+            _expirationTimer = new Timer(_ => HandleTokenExpired(), null, timeUntilExpiration, Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    private async void HandleTokenExpired()
+    {
+        try
+        {  
+            await LogoutAsync();
+
+            await _jsRuntime.InvokeVoidAsync("alert", "Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+       
+            _navigationManager.NavigateTo("/login", forceLoad: true);
+        }
+        catch (TaskCanceledException)
+        {
+            
+            Console.WriteLine("[AuthContext] La tarea fue cancelada durante el manejo de la expiración del token.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[AuthContext] Error inesperado: {ex.Message}");
+        }
+    }
+
+    private void ResetUserInfo()
+    {
+        _userName = string.Empty;
+        _userId = 0;
+        _expirationTimer?.Dispose();
+        _expirationTimer = null;
+    }
     public async Task SaveTokenToLocalStorageAsync(string token)
     {
         Console.WriteLine($"[AuthContext] Guardando token en SessionStorage: {token}");
@@ -95,8 +149,7 @@ public class AuthContext : IAuthContext
         Console.WriteLine("[AuthContext] Cerrando sesión. Eliminando token de SessionStorage.");
         await _jsRuntime.InvokeVoidAsync("sessionStorage.removeItem", "UserToken");
         _userToken = string.Empty;
-        _userName = string.Empty;
-        _userId = 0;
+        ResetUserInfo();
         NotifyStateChanged(); // Notificar a los componentes que el estado ha cambiado
     }
 

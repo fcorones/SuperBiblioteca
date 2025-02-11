@@ -10,7 +10,7 @@
     <ProjectReference Include="..\Biblioteca_Blazor_v1.Client\Biblioteca_Blazor_v1.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
     <PackageReference Include="MudBlazor" Version="8.1.0" />
-    <PackageReference Include="Syncfusion.Blazor.Calendars" Version="22.1.36" />
+   
   </ItemGroup>
 
 </Project>

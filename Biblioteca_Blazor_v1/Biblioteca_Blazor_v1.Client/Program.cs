@@ -1,6 +1,6 @@
 using BibliotecaDeClasesWinformYBlazor.Servicios;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Syncfusion.Blazor;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddScoped<AuthContext>();
@@ -32,7 +32,6 @@ builder.Services.AddHttpClient<IGeorefService, GeorefService>(client =>
     client.BaseAddress = new Uri("https://apis.datos.gob.ar/georef/api/");
 });
 
-builder.Services.AddSyncfusionBlazor();
 
 var host = builder.Build();
 

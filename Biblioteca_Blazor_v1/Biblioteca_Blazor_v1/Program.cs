@@ -2,7 +2,7 @@ using Biblioteca_Blazor_v1.Components;
 using BibliotecaDeClasesWinformYBlazor;
 using BibliotecaDeClasesWinformYBlazor.Servicios;
 using MudBlazor.Services;
-using Syncfusion.Blazor;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +37,7 @@ builder.Services.AddScoped<UsuarioService>(sp =>
 
 builder.Services.AddHttpClient<IGeorefService, GeorefService>();
 
-builder.Services.AddSyncfusionBlazor();
+
 // Registrar MudBlazor
 builder.Services.AddMudServices();
 

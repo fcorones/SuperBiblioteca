@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Winform_v1", "..\Biblioteca_Winform_v1\Biblioteca_Winform_v1\Biblioteca_Winform_v1.csproj", "{3D49906F-B505-4BF0-A847-BF25EC5C8B22}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Blazor_v1", "Biblioteca_Blazor_v1\Biblioteca_Blazor_v1\Biblioteca_Blazor_v1.csproj", "{73E07712-CA4B-4385-A4BC-E29A69D5030F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Blazor_v1.Client", "Biblioteca_Blazor_v1\Biblioteca_Blazor_v1.Client\Biblioteca_Blazor_v1.Client.csproj", "{917B2F1A-BA20-49C6-BC27-A0F15D034B18}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BibliotecaDeClasesWinformYBlazor", "BibliotecaDeClasesWinformYBlazor\BibliotecaDeClasesWinformYBlazor.csproj", "{C8935161-04B2-4877-9227-7AD9999857CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca_Winform_v1", "..\..\Users\alvar\OneDrive\Escritorio\TP-Seminario-1\v2 modificaciones\tp 27-01-2025\Biblioteca_Winform_v1\Biblioteca_Winform_v1\Biblioteca_Winform_v1.csproj", "{2921A87E-F21D-44D3-B494-1F9F69AAC190}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3D49906F-B505-4BF0-A847-BF25EC5C8B22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D49906F-B505-4BF0-A847-BF25EC5C8B22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D49906F-B505-4BF0-A847-BF25EC5C8B22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D49906F-B505-4BF0-A847-BF25EC5C8B22}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73E07712-CA4B-4385-A4BC-E29A69D5030F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73E07712-CA4B-4385-A4BC-E29A69D5030F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73E07712-CA4B-4385-A4BC-E29A69D5030F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{C8935161-04B2-4877-9227-7AD9999857CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8935161-04B2-4877-9227-7AD9999857CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8935161-04B2-4877-9227-7AD9999857CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2921A87E-F21D-44D3-B494-1F9F69AAC190}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
