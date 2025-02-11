@@ -30,5 +30,10 @@ namespace Biblioteca_Winform_v1
         {
             return _userToken;
         }
+
+        public static void ClearGlobalToken()
+        {
+            _userToken = null;
+        }
     }
 }

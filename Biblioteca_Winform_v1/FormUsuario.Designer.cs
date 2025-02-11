@@ -45,6 +45,7 @@
             label1 = new Label();
             btnVerReservasUsuario = new Button();
             checkUsrPedidos = new CheckBox();
+            cerrarSesiónToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)dataGridViewUsuarios).BeginInit();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -113,7 +114,7 @@
             // 
             // menúToolStripMenuItem
             // 
-            menúToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { librosToolStripMenuItem, usuariosToolStripMenuItem, pedidosToolStripMenuItem, autoresToolStripMenuItem, editorialesToolStripMenuItem, génerosToolStripMenuItem });
+            menúToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { librosToolStripMenuItem, usuariosToolStripMenuItem, pedidosToolStripMenuItem, autoresToolStripMenuItem, editorialesToolStripMenuItem, génerosToolStripMenuItem, cerrarSesiónToolStripMenuItem });
             menúToolStripMenuItem.Font = new Font("Segoe UI", 12F);
             menúToolStripMenuItem.Name = "menúToolStripMenuItem";
             menúToolStripMenuItem.Size = new Size(62, 25);
@@ -122,7 +123,7 @@
             // librosToolStripMenuItem
             // 
             librosToolStripMenuItem.Name = "librosToolStripMenuItem";
-            librosToolStripMenuItem.Size = new Size(152, 26);
+            librosToolStripMenuItem.Size = new Size(180, 26);
             librosToolStripMenuItem.Text = "Libros";
             librosToolStripMenuItem.Click += librosToolStripMenuItem_Click;
             // 
@@ -130,35 +131,35 @@
             // 
             usuariosToolStripMenuItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             usuariosToolStripMenuItem.Name = "usuariosToolStripMenuItem";
-            usuariosToolStripMenuItem.Size = new Size(152, 26);
+            usuariosToolStripMenuItem.Size = new Size(180, 26);
             usuariosToolStripMenuItem.Text = "Usuarios";
             usuariosToolStripMenuItem.Click += usuariosToolStripMenuItem_Click;
             // 
             // pedidosToolStripMenuItem
             // 
             pedidosToolStripMenuItem.Name = "pedidosToolStripMenuItem";
-            pedidosToolStripMenuItem.Size = new Size(152, 26);
+            pedidosToolStripMenuItem.Size = new Size(180, 26);
             pedidosToolStripMenuItem.Text = "Pedidos";
             pedidosToolStripMenuItem.Click += pedidosToolStripMenuItem_Click;
             // 
             // autoresToolStripMenuItem
             // 
             autoresToolStripMenuItem.Name = "autoresToolStripMenuItem";
-            autoresToolStripMenuItem.Size = new Size(152, 26);
+            autoresToolStripMenuItem.Size = new Size(180, 26);
             autoresToolStripMenuItem.Text = "Autores";
             autoresToolStripMenuItem.Click += autoresToolStripMenuItem_Click;
             // 
             // editorialesToolStripMenuItem
             // 
             editorialesToolStripMenuItem.Name = "editorialesToolStripMenuItem";
-            editorialesToolStripMenuItem.Size = new Size(152, 26);
+            editorialesToolStripMenuItem.Size = new Size(180, 26);
             editorialesToolStripMenuItem.Text = "Editoriales";
             editorialesToolStripMenuItem.Click += editorialesToolStripMenuItem_Click;
             // 
             // génerosToolStripMenuItem
             // 
             génerosToolStripMenuItem.Name = "génerosToolStripMenuItem";
-            génerosToolStripMenuItem.Size = new Size(152, 26);
+            génerosToolStripMenuItem.Size = new Size(180, 26);
             génerosToolStripMenuItem.Text = "Géneros";
             génerosToolStripMenuItem.Click += génerosToolStripMenuItem_Click;
             // 
@@ -203,6 +204,13 @@
             checkUsrPedidos.Text = "Mostrar usuarios con pedidos";
             checkUsrPedidos.UseVisualStyleBackColor = true;
             checkUsrPedidos.CheckedChanged += checkUsrPedidos_CheckedChanged;
+            // 
+            // cerrarSesiónToolStripMenuItem
+            // 
+            cerrarSesiónToolStripMenuItem.Name = "cerrarSesiónToolStripMenuItem";
+            cerrarSesiónToolStripMenuItem.Size = new Size(180, 26);
+            cerrarSesiónToolStripMenuItem.Text = "Cerrar Sesión";
+            cerrarSesiónToolStripMenuItem.Click += cerrarSesiónToolStripMenuItem_Click;
             // 
             // FormUsuario
             // 
@@ -252,5 +260,6 @@
         private Label label1;
         private Button btnVerReservasUsuario;
         private CheckBox checkUsrPedidos;
+        private ToolStripMenuItem cerrarSesiónToolStripMenuItem;
     }
 }

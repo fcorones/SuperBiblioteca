@@ -108,6 +108,7 @@
             panelCargando.Size = new Size(648, 376);
             panelCargando.TabIndex = 6;
             panelCargando.Visible = false;
+            panelCargando.Paint += panelCargando_Paint;
             // 
             // label4
             // 
@@ -132,6 +133,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormClosing += Login_FormClosing;
             MaximizeBox = false;
             Name = "Login";
             StartPosition = FormStartPosition.CenterScreen;

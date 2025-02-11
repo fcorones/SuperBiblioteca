@@ -16,6 +16,7 @@ namespace Biblioteca_Winform_v1
         {
             InitializeComponent();
             _authContext = authContext;
+           
         }
 
         private async void btnIniciar_Click(object sender, EventArgs e)
@@ -131,6 +132,7 @@ namespace Biblioteca_Winform_v1
             MessageBox.Show(mensaje, titulo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
+        
         private void txtContraseña_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
@@ -140,6 +142,17 @@ namespace Biblioteca_Winform_v1
         }
 
         private void Login_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void Login_FormClosing(object sender, FormClosingEventArgs e)
+        { 
+
+         Application.Exit();
+
+        }
+
+        private void panelCargando_Paint(object sender, PaintEventArgs e)
         {
 
         }

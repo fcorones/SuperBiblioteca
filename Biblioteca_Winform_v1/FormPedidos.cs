@@ -32,7 +32,7 @@ namespace Biblioteca_Winform_v1
             _usuarioService = new UsuarioService(authContext);
             _libroService = new LibroService(authContext);
 
-             SincronizarEstadoLibrosAsync();
+            SincronizarEstadoLibrosAsync();
 
             btnActualizar_Pedido_Click(null, null);
         }
@@ -316,10 +316,20 @@ namespace Biblioteca_Winform_v1
 
         }
 
-       
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             btnActualizar_Pedido_Click(sender, e);
+        }
+
+        private void cerrarSesiónToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            AuthContext.ClearGlobalToken();
+            var _authContext = new AuthContext();
+            // Mostrar el formulario de inicio de sesión
+            var loginForm = new Login(_authContext);
+            loginForm.Show();
         }
     }
 }

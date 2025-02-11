@@ -262,7 +262,7 @@ namespace Biblioteca_Winform_v1
                     FechaDevolucion = fechaDevolucion,
                     UsuarioId = usuarioId,
                     LibroId = libroId,
-                    Activo = true, // Marcamos como activo al crearlo
+                    Activo = false, 
                     Eliminado = false
                 };
 

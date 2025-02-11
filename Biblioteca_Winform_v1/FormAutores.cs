@@ -189,6 +189,16 @@ namespace Biblioteca_Winform_v1
             form.Show();
             this.Hide();
         }
+
+        private void cerrarSesiónToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            AuthContext.ClearGlobalToken();
+            var _authContext = new AuthContext();
+            // Mostrar el formulario de inicio de sesión
+            var loginForm = new Login(_authContext);
+            loginForm.Show();
+        }
     }
 
 

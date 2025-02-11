@@ -1,6 +1,8 @@
+using BibliotecaDeClasesWinformYBlazor;
 using BibliotecaDeClasesWinformYBlazor.Models;
 using BibliotecaDeClasesWinformYBlazor.Servicios;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Biblioteca_Winform_v1
@@ -22,7 +24,7 @@ namespace Biblioteca_Winform_v1
         public Form1()
         {
             InitializeComponent();
-            var authContext = new AuthContext(); 
+            var authContext = new AuthContext();
 
             authContext.UserToken = AuthContext.GetGlobalToken();
 
@@ -38,7 +40,7 @@ namespace Biblioteca_Winform_v1
         {
 
         }
-     
+
         private async void buttonACTUALIZAR_Click(object sender, EventArgs e)
         {
             try
@@ -131,8 +133,8 @@ namespace Biblioteca_Winform_v1
         ///
         private void buttonCREAR_Click(object sender, EventArgs e)
         {
-            
-            var formCrearLibro = new FormCrearLibro(_libroService,_autorService,_editorialService,_generosService);
+
+            var formCrearLibro = new FormCrearLibro(_libroService, _autorService, _editorialService, _generosService);
             formCrearLibro.ShowDialog();
             buttonACTUALIZAR_Click(null, null);
         }
@@ -171,7 +173,7 @@ namespace Biblioteca_Winform_v1
                 };
 
                 // Abrir el formulario de edición con los datos del libro
-                var formCrearLibro = new FormCrearLibro(_libroService, _autorService, _editorialService, _generosService,libroSeleccionado);
+                var formCrearLibro = new FormCrearLibro(_libroService, _autorService, _editorialService, _generosService, libroSeleccionado);
                 formCrearLibro.ShowDialog();
 
                 // Refrescar la lista de libros después de modificar
@@ -320,6 +322,23 @@ namespace Biblioteca_Winform_v1
         private void dataGridViewLibros_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void cerrarSesiónToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            AuthContext.ClearGlobalToken();
+            var _authContext = new AuthContext();
+            // Mostrar el formulario de inicio de sesión
+            var loginForm = new Login(_authContext);
+            loginForm.Show();
+
+            
         }
     }
 }
