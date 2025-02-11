@@ -1,0 +1,44 @@
+﻿										IMPLEMENTACIONES
+-----
+Filtrar eliminados abajo del todo:
+[X]Libros
+[X]Usuarios
+[X]Pedidos
+[X]Autores
+[X]Editoriales
+[X]Géneros
+-----
+
+-----
+agregado de separadores entre columnas
+[]Libros
+[]Usuarios
+[X]Pedidos
+[]Autores
+[]Editoriales
+[]Géneros
+-----
+
+chequeos de validaciones: numeros negativos, carácteres, etc.
+
+
+[X]Libros
+[X]Usuarios
+[X]Pedidos
+[X]Autores
+[X]Editoriales
+[X]Géneros
+-----
+
+
+
+plantilla para copy paste
+-----
+
+[]Libros
+[]Usuarios
+[]Pedidos
+[]Autores
+[]Editoriales
+[]Géneros
+-----

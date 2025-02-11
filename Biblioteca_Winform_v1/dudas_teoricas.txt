@@ -1,0 +1,6 @@
+﻿1- como hace la "X" que representa el estado eliminado de un genero, autor, etc para mostrarse?
+2- como hace la "X" para salirse en los que no estan eliminados, y colocarse en los eliminados?
+3- como funciona el sistema de eliminacion desde la api? eso de que se pone en true o false y si ya estaba en false se revierte
+	+ con Get...ByIdAsync se trae el objeto y se alterna el estado. si era true se pnoe false y si era false se pone true.
+	  se toma el nuevo objeto y se hace PUT
+

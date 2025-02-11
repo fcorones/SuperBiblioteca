@@ -1,0 +1,136 @@
+﻿---------20-12---------
+-elimine por completo el sistema de sugerencias
+-termine la implementación del boton crear. ya está listo
+-intente implementar el botón de modificar. para eso: 1º se agregó un nuevo constructor FormCrearLibro que acepta como parámetro
+extra un libro que yo le mando, para que tome los datos de ahí.
+
+---------26-12---------
+estoy teniendo un error con el botón modificar. el problema es que el botón crear tiene una logica que cuando
+vos le insertas un autor (ejemplo, Andrew S. Tanenbaum) lo busca y antes de guardarlo en la BDD relaciona el nombre
+con el ID y lo guarda con el ID directamente. bueno esta lógica no está implementada para el botón del PUT (modificar)
+asi que habria que ver de como implementar eso
+<arreglado lo de arriba
+
+estoy tratando de implmentar el CRUD de autores para crear autores desde ahi
+			DUDA: habria que agregarle que ponga los libros que hizo X autor o ni da?
+
+PENDIENTE: BOTON ELIMINAR LIBROS
+
+hoy agregado:
+datagridview y botones de usuarios y autores 
+agregue AutorService con GET, falta POST
+termine el boton modificar de libros. falta hacer el boton eliminar de libros
+
+
+PENDIENTE:
+-hacer método POST, PUT de autores en AutorService y los botones
+-probarlos
+---------27-12---------
+
+terminé el Autor, falta hacer el elimianr
+voy a continuar con el de usuarios que ya se mas o menos como se hace y cuando tenga los 3, hago los 3 de eliminar
+		para eso debo modificar la API
+usuario:
+formusuarios, formcrearusuario, hashear contraseña (gpt)
+
+
+NOTA: no sería correcto que el gerente de de alta usuarios, la idea es que lo puedan hacer
+ellos mismos desde el frontend. no debería verles la contraseña
+tampoco debería dar de alta los admines, salvo que esté planteado que
+cree el usuario admin, le ponga una contraseña default, y luego la pueda modificar más adelante
+
+FALTA: AUTENTICACIÓN/ENDPOINTS BASADA EN ROLES
+
+
+30-12
+tengo un problema: el campo contraseña hasheada aparece en blanco
+ya pude hacer el hasheo y todo eso, pero no pude terminar eso
+cual puede ser el problema?
+le debo estar erraando el camino, capaz tengo q hacer otra cosa
+solucionado: agregado checkbox para pisar contraseña
+
+
+02-01
+implementé el sistema de eliminacion en usuarios.
+la base de datos tiene una columna "Eliminado" que es booleana (0 o 1) y se ve que EF lo mapea a True o False
+ese true o false se pone en la tabla
+
+
+
+03-01
+hoy voy a continuar con la eliminacion, supongo que de libro y autor
+vere la posibilidad de implementar prestamos?
+
+IMPLEMENTAR ELIMINACION:
+1º modificar el service y genererar un ModificarLibroAsync
+2º modificar la API las operaciones de GET y POST que tengan el campo usuario.Eliminado
+3º modificar datagridview para que tenga el campo Eliminado (agregarle lo del ternario ? "Si" : "No")
+4º verificar que funcione todo
+5º implementar el checkbox de filtro. recordar que el filtro es solo desde la tabla no desde el get.
+para eso hbay que modificar el metodo actualizar (que filtra) y agregar un checkbox
+
+
+
+07-01
+PENDIENTE:
+-ver de ocultar el campo ID siempre al momento de crear o modificar. 
+o si lo permito que en todos pueda ver que ande añadir un id propio
+-expandir la ventana
+
+ya hice la eliminacion del que faltaba. 
+ya hice el CRUD de autores y de generos
+
+estoy intentando hacer que detecte en el Form1 (libros) si el genero, autor o editorial está marcado como eliminado. en ese caso que
+remarque la casilla en gris o con emoji si el genero existe o no existe
+
+08-01
+
+completado lo de la X si el género, autor, o editorial está eliminado
+
+
+tarea: ver de añadir que en el propio Form genero, libro, autor, etc, se marque con una X el que está borrado. 
+capaz que estaría piola mover el campo "eliminado" adelante del ID, y donde se hace el ternario "Eliminado? : Si : No" poner "Eliminado? : X  : "
+o sea, vacío si no está eliminado, X si está eliminado
+
+09-01
+TAREA:
+
+implementar endpoint para realizar pedidos. pensarlo bien
+implementar winform para los pedidos
+implementar que sea modular o reactivo para q lo agrandes y eso
+
+
+pendiente: que cuando cree no pueda poner un id propio, que el campo aparezca vacío y se setee automaticamente en 1, como
+funicona en Libros decirle a gpt que lo copie
+
+DISCUTIR CON ALVARO: 
+1 hará falta agregar un campo que indique si el libro está en stock en ingles o en español
+2 hara falta agregar un numero que indique cantidad en stock?
+3 debatir fuertemente la intencion de NumeroEdicion en Libro
+4 casillas X o [], o directamente "Si" / "No" al estado "Eliminado" y "Prestado"????
+
+10-01 - 
+
+15-01
+problema con post de api
+
+17-01
+solucionado post de api. el error era que se estaba llamando al método GetPrestamo pero no había creado
+un GetPrestamo(int id) sino un all
+
+continuado con el ABM de pedidos. agregar funcionalidad de filtrado y eliminación.
+
+18-01
+19-01
+agregar logica para que la variable booleana del libro "BoolPrestado" cambie a true cuando un libro
+forma parte de un pedido
+supongo que habria que tomar LibroId y ver cuales estan pedidos, y en base a eso restringir 
+la carga en la tabla de FormCrearPedido
+
+20 21 22
+varias modificaciones
+logica completada (creo)
+lo hice un poco mas lindo
+
+ahora estoy tratando de implementar la autenticacion jwt
+
