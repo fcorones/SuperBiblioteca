@@ -1,8 +1,8 @@
-﻿@using BibliotecaDeClasesWinformYBlazor.Servicios;
-@using BibliotecaDeClasesWinformYBlazor.Models;
+﻿@page "/libros"
+@using BibliotecaDeClasesWinformYBlazor.Servicios
+@using BibliotecaDeClasesWinformYBlazor.Models
 @inject LibroService LibroService
 @inject NavigationManager Navigation
-
 
 @if (isLoading)
 {
@@ -29,20 +29,32 @@ else if (!Libros.Any())
 else
 {
     <div class="book-grid">
-        @foreach (var libro in Libros.Where(l => !l.Eliminado))
+        @foreach (var libro in LibrosPaginados)
         {
             <div class="book-item" @key="libro.Id" @onclick="() => VerDetalles(libro.Id)">
                 <img src="@libro.PortadaUrl" alt="@libro.Titulo" class="book-cover" />
             </div>
         }
     </div>
+
+    <div class="pagination-controls">
+        <button @onclick="PaginaAnterior" disabled="@(PaginaActual == 1)">Anterior</button>
+        <span>Página @PaginaActual de @TotalPaginas</span>
+        <button @onclick="PaginaSiguiente" disabled="@(PaginaActual == TotalPaginas)">Siguiente</button>
+    </div>
 }
 
 @code {
     private List<Libro> Libros = new();
+    private IEnumerable<Libro> LibrosPaginados => Libros.Skip((PaginaActual - 1) * TamañoPagina).Take(TamañoPagina);
     private bool isLoading = true;
     private string errorMessage = null;
     private bool _datosCargados = false;
+
+ 
+    private int PaginaActual = 1;
+    private int TamañoPagina = 12;
+    private int TotalPaginas => (int)Math.Ceiling((double)Libros.Count / TamañoPagina);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -65,30 +77,27 @@ else
             }
         }
     }
-    /*
-    protected override async Task OnInitializedAsync()
-    {
-        if (Libros.Any()) return; // Evita cargar si ya se hizo antes
 
-        try
-        {
-            isLoading = true;
-            Libros = await LibroService.GetLibrosAsync();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Error al cargar los libros: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-    */
     private void VerDetalles(int libroId)
     {
         // Navegar a la página de detalles del libro
         Navigation.NavigateTo($"/libro/{libroId}");
+    }
+
+    private void PaginaAnterior()
+    {
+        if (PaginaActual > 1)
+        {
+            PaginaActual--;
+        }
+    }
+
+    private void PaginaSiguiente()
+    {
+        if (PaginaActual < TotalPaginas)
+        {
+            PaginaActual++;
+        }
     }
 }
 
@@ -160,7 +169,6 @@ else
         }
     }
 
-    /* Mantener los estilos existentes del grid de libros */
     .book-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -196,4 +204,32 @@ else
     .book-item:hover .book-cover {
         opacity: 0.9;
     }
+
+    .pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+        .pagination-controls button {
+            padding: 8px 16px;
+            border: none;
+            background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .pagination-controls button:disabled {
+                background: linear-gradient(135deg, #cccccc, #999999);
+                color: #666666;
+                cursor: not-allowed;
+            }
+
+            .pagination-controls button:hover:not(:disabled) {
+                background-color: #0056b3;
+            }
 </style>
