@@ -25,7 +25,7 @@ namespace Biblioteca_Winform_v1
 
 
 
-
+        //Constructor 1: Crear un libro
         public FormCrearLibro(
        LibroService libroService,
        AutorService autorService,
@@ -38,7 +38,7 @@ namespace Biblioteca_Winform_v1
             _editorialService = editorialService;
             _generosService = generosService;
 
-            txtId.Enabled = false;
+            txtId.Enabled = false; //Deshabilitamos el ingreso de Id. Forzamos id a 0
             txtId.Text = "0";
             CargarDatosIniciales(); // Cargar datos al iniciar
         }
@@ -49,6 +49,36 @@ namespace Biblioteca_Winform_v1
             await CargarEditoriales();
             await CargarGeneros();
         }
+
+        private async Task CargarGeneros()
+        {
+            var generos = await _generosService.GetGenerosAsync(); //GET de Generos
+            clbGeneros.DataSource = generos;         // Asigna "generos" como fuente de datos del checklist
+            clbGeneros.DisplayMember = "NombreGenero";  //La propiedad que se muestra en cada objeto
+            clbGeneros.ValueMember = "Id";  //Propiedad (id) de cada objeto usada como valor de cada elemento
+
+            if (_libroEnEdicion != null && clbGeneros.Items.Count > 0)
+            {
+                //Recorremos todos los ítems del CheckedListBox
+                for (int i = 0; i < clbGeneros.Items.Count; i++)
+                {
+                    var genero = (Genero)clbGeneros.Items[i];  //Asumimos que clbGeneros contiene objetos de tipo Genero
+                                                               //Comprobamos si el género está en la lista de géneros del libro en edición
+                    if (_libroEnEdicion.NombresGeneros.Contains(genero.NombreGenero))
+                    {
+                        //Si el género está en la lista, lo marcamos como seleccionado
+                        clbGeneros.SetItemChecked(i, true);
+                    }
+                    else
+                    {
+                        //Si no está en la lista, lo dejamos sin seleccionar
+                        clbGeneros.SetItemChecked(i, false);
+                    }
+                }
+            }
+        }
+
+
         private async Task CargarAutores()
         {
             var autores = await _autorService.GetAutoresAsync();
@@ -96,36 +126,11 @@ namespace Biblioteca_Winform_v1
             }
         }
 
-        private async Task CargarGeneros()
-        {
-            var generos = await _generosService.GetGenerosAsync();
-            clbGeneros.DataSource = generos;
-            clbGeneros.DisplayMember = "NombreGenero";
-            clbGeneros.ValueMember = "Id";
-
-            if (_libroEnEdicion != null && clbGeneros.Items.Count > 0)
-            {
-                // Recorremos todos los ítems del CheckedListBox
-                for (int i = 0; i < clbGeneros.Items.Count; i++)
-                {
-                    var genero = (Genero)clbGeneros.Items[i];  // Asumimos que clbGeneros contiene objetos de tipo Genero
-                                                               // Comprobamos si el género está en la lista de géneros del libro en edición
-                    if (_libroEnEdicion.NombresGeneros.Contains(genero.NombreGenero))
-                    {
-                        // Si el género está en la lista, lo marcamos como seleccionado
-                        clbGeneros.SetItemChecked(i, true);
-                    }
-                    else
-                    {
-                        // Si no está en la lista, lo dejamos sin seleccionar
-                        clbGeneros.SetItemChecked(i, false);
-                    }
-                }
-            }
-        }
-
+        
         private Libro _libroEnEdicion;
 
+        //Constructor 2: Edición
+        //Constructor sobrecargado. Si se recibe algo en "libroEnEdicion" quiere decir que se abrió en modo EDICIÓN
         public FormCrearLibro(LibroService libroService, AutorService autorService, EditorialService editorialService, GenerosService generosService, Libro libroEnEdicion = null) : this(libroService, autorService, editorialService, generosService)
         {
             _libroEnEdicion = libroEnEdicion;
@@ -224,7 +229,7 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
-                // Obtener valores seleccionados
+                // Obtenemos valores seleccionados
                 var autorSeleccionado = (Autor)cmbAutor.SelectedItem;
                 var editorialSeleccionada = (Editorial)cmbEditorial.SelectedItem;
                 var generosSeleccionados = clbGeneros.CheckedItems.Cast<Genero>().ToList();
@@ -238,11 +243,11 @@ namespace Biblioteca_Winform_v1
                     AnioDePublicacion = anioDePublicacion,
                     ISBN = txtISBN.Text.Trim(),
                     NumeroEdicion = numeroEdicion,
-                    NombreAutor = autorSeleccionado.NombreAutor,
+                    NombreAutor = autorSeleccionado.NombreAutor, //datos de los combobox
                     NombreEditorial = editorialSeleccionada.NombreEditorial,
                     PortadaUrl = string.IsNullOrWhiteSpace(txtPortadaUrl.Text) ? string.Empty : txtPortadaUrl.Text.Trim(),
                     Descripcion = string.IsNullOrWhiteSpace(txtDescripcion_v1.Text) ? string.Empty : txtDescripcion_v1.Text.Trim(),
-                    NombresGeneros = generosSeleccionados.Select(g => g.NombreGenero).ToList()
+                    NombresGeneros = generosSeleccionados.Select(g => g.NombreGenero).ToList() //datos del checklist
                 };
 
                 // Confirmar la acción

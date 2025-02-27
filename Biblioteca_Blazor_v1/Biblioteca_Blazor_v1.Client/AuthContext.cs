@@ -8,17 +8,17 @@ using Microsoft.JSInterop;
 
 public class AuthContext : IAuthContext
 {
-    private readonly IJSRuntime _jsRuntime;
+    private readonly IJSRuntime _jsRuntime; //Permite interacción JavaScript par acceder al sessionStorage
     private readonly NavigationManager _navigationManager;
-    private string _userToken;
-    private string _userName;
-    private int _userId;
-    private bool _isInitialized = false;
+    private string _userToken;      //
+    private string _userName;       //Datos extraidos del token
+    private int _userId;            //
+    private bool _isInitialized = false; // En desuso
     public event Action OnChange;
 
     public AuthContext(IJSRuntime jsRuntime, NavigationManager navigationManager)
     {
-        _jsRuntime = jsRuntime;
+        _jsRuntime = jsRuntime;         
         _navigationManager = navigationManager;
     }
 
@@ -34,9 +34,10 @@ public class AuthContext : IAuthContext
         }
     }
 
-    public void NotifyStateChanged() => OnChange?.Invoke();
-    public string UserName => _userName;
-    public int UserId => _userId;
+    //Invoca al evento OnChange para notificar alos componentes que la autenticación cambió
+    public void NotifyStateChanged() => OnChange?.Invoke(); 
+    public string UserName => _userName;    // Devuelve nomrbe y Id almacenados
+    public int UserId => _userId;           //
 
     private Timer _expirationTimer;
 
@@ -52,15 +53,16 @@ public class AuthContext : IAuthContext
 
         try
         {
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(_userToken);
+            //Creamos instancia del handler. Permite leer el token
+            var handler = new JwtSecurityTokenHandler();    
+            var token = handler.ReadJwtToken(_userToken); //Deserializamos el token y lo guardamos
 
-            _userName = token.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value ?? "Usuario";
-            _userId = int.Parse(token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? "0");
+            _userName = token.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value ?? "Usuario";  //
+            _userId = int.Parse(token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? "0");       //
+           /*                       Accedemos a los claims y extraemos la info del usuario              */                                                                        
 
-           
             var expirationTime = token.ValidTo;
-            ScheduleExpirationCheck(expirationTime);
+            ScheduleExpirationCheck(expirationTime); //Verificamos expiración del token
 
             Console.WriteLine($"[AuthContext] Nombre: {_userName}, ID: {_userId}, Expira: {expirationTime}");
         }
@@ -84,7 +86,7 @@ public class AuthContext : IAuthContext
         }
         else
         {
-            // Programar chequeo de expiración
+            // Programamos chequeo de expiración. Si expiró, llamamos a HandleTokenExpired
             _expirationTimer = new Timer(_ => HandleTokenExpired(), null, timeUntilExpiration, Timeout.InfiniteTimeSpan);
         }
     }
@@ -92,7 +94,7 @@ public class AuthContext : IAuthContext
     private async void HandleTokenExpired()
     {
         try
-        {  
+        {   //Reestablece la auth como un Logout
             await LogoutAsync();
 
             await _jsRuntime.InvokeVoidAsync("alert", "Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
@@ -112,10 +114,10 @@ public class AuthContext : IAuthContext
 
     private void ResetUserInfo()
     {
-        _userName = string.Empty;
-        _userId = 0;
-        _expirationTimer?.Dispose();
-        _expirationTimer = null;
+        _userName = string.Empty;       //
+        _userId = 0;                    // Parámetros a 0
+        _expirationTimer?.Dispose();    //
+        _expirationTimer = null;        //
     }
     public async Task SaveTokenToLocalStorageAsync(string token)
     {
@@ -128,7 +130,7 @@ public class AuthContext : IAuthContext
     public async Task LoadTokenFromLocalStorageAsync()
     {
         try
-        {
+        { //Toma el token desde el sessionStorage del navegador
             var token = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "UserToken");
             Console.WriteLine($"[AuthContext] Token cargado desde SessionStorage: {token}");
 
@@ -144,7 +146,7 @@ public class AuthContext : IAuthContext
     }
 
 
-    public async Task LogoutAsync()
+    public async Task LogoutAsync() //Logout. Resetea a 0 la info y borra el token del sessionStorage
     {
         Console.WriteLine("[AuthContext] Cerrando sesión. Eliminando token de SessionStorage.");
         await _jsRuntime.InvokeVoidAsync("sessionStorage.removeItem", "UserToken");

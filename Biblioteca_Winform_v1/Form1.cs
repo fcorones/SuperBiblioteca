@@ -11,29 +11,33 @@ namespace Biblioteca_Winform_v1
     {
 
         private readonly LibroService _libroService;
-        private readonly PrestamoService _prestamoService;
+        private readonly PrestamoService _prestamoService;          
         private readonly AutorService _autorService;
         private readonly EditorialService _editorialService;
         private readonly GenerosService _generosService;
 
 
         private bool _mostrarEliminados = false;
-        private bool _mostrarPrestados = true; // Por defecto, mostrar libros prestados
+        private bool _mostrarPrestados = true; //Por defecto mostrar libros prestados y descartar eliminados
 
 
         public Form1()
         {
             InitializeComponent();
+            //Instancia de AuthContext para obtener el token.
             var authContext = new AuthContext();
 
+            //Se toma el token del context. 
             authContext.UserToken = AuthContext.GetGlobalToken();
 
+            //Pasaje de la instancia de AuthContext (con el token) a los Services.
+            //El HttpClientProvider del Service ahora puede agregar el token en el encabezado HTTP
             _libroService = new LibroService(authContext);
             _prestamoService = new PrestamoService(authContext);
             _autorService = new AutorService(authContext);
             _editorialService = new EditorialService(authContext);
             _generosService = new GenerosService(authContext);
-            buttonACTUALIZAR_Click(null, null);
+            buttonACTUALIZAR_Click(null, null); //Refrescamos al iniciar
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -45,19 +49,20 @@ namespace Biblioteca_Winform_v1
         {
             try
             {
-                // Obtener todos los préstamos activos
+                // Obtenemos todos los préstamos activos
                 var prestamos = await _prestamoService.GetPrestamosAsync();
 
-                // Obtener todos los libros
+                // Obtenemos todos los libros
                 var libros = await _libroService.GetLibrosAsync();
 
-                // Actualizar el estado prestado de los libros según los préstamos
+                // Actualizamos el estado prestado de los libros según los préstamos
                 foreach (var prestamo in prestamos)
                 {
                     var libro = libros.FirstOrDefault(l => l.Id == prestamo.LibroId);
                     if (libro != null)
                     {
-                        // Actualizar solo si hay un cambio en el estado
+                        // Recorremos todos los libros de los prestamos.
+                        // Actualizamos el bool "Prestado" de cada libro en base a los prestamos existentes
                         var nuevoEstado = prestamo.Activo;
                         if (libro.BoolPrestado != nuevoEstado)
                         {
@@ -67,7 +72,7 @@ namespace Biblioteca_Winform_v1
                     }
                 }
 
-                // Filtrar los libros eliminados si corresponde
+                // Filtramos los libros eliminados si corresponde
                 if (!_mostrarEliminados)
                 {
                     libros = libros.Where(l => !l.Eliminado).ToList();
@@ -79,6 +84,7 @@ namespace Biblioteca_Winform_v1
                 }
 
                 // Transformar los datos para mostrarlos en el DataGridView
+                //Genera variable a la cual se le carga la informacion. esta luego se carga en el DGV
                 var librosParaMostrar = libros.Select(libro => new
                 {
                     libro.Id,
@@ -95,13 +101,13 @@ namespace Biblioteca_Winform_v1
                     libro.PortadaUrl,
                     libro.Descripcion
                 }).OrderBy(libro => libro.Eliminado)
-                  .ThenBy(libro => libro.Id)
+                  .ThenBy(libro => libro.Id)    //Ordena según eliminado, y si coinciden, por ID
                   .ToList();
 
-                // Actualizar el DataGridView con los datos transformados
+                //Actualizamos el DataGridView con los datos transformados
                 dataGridViewLibros.DataSource = librosParaMostrar;
 
-                // Configurar encabezados
+                //Configuramos encabezados
 
                 dataGridViewLibros.Columns["Titulo"].HeaderText = "Título";
                 dataGridViewLibros.Columns["TituloEspaniol"].HeaderText = "Título en Español";
@@ -133,7 +139,7 @@ namespace Biblioteca_Winform_v1
         ///
         private void buttonCREAR_Click(object sender, EventArgs e)
         {
-
+            //Instanciamos el Form FormCrearLibro y le pasamos los Services
             var formCrearLibro = new FormCrearLibro(_libroService, _autorService, _editorialService, _generosService);
             formCrearLibro.ShowDialog();
             buttonACTUALIZAR_Click(null, null);
@@ -147,7 +153,7 @@ namespace Biblioteca_Winform_v1
                 var filaSeleccionada = dataGridViewLibros.SelectedRows[0];
                 var libroId = Convert.ToInt32(filaSeleccionada.Cells["Id"].Value);
 
-                // Obtener el libro completo desde la base de datos
+                // Obtenemos el libro completo desde la base de datos
                 var libroCompleto = await _libroService.GetLibroByIdAsync(libroId);
 
                 if (libroCompleto == null)
@@ -156,7 +162,7 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
-                // Crear un objeto Libro con los datos del servicio
+                // Creamos un objeto Libro con los datos del servicio
                 var libroSeleccionado = new Libro
                 {
                     Id = libroCompleto.Id,
@@ -172,11 +178,14 @@ namespace Biblioteca_Winform_v1
                     PortadaUrl = libroCompleto.PortadaUrl
                 };
 
-                // Abrir el formulario de edición con los datos del libro
+                // Abrimos el formulario de edición con los datos del libro
+                /*
+                 Al incluir libroSeleccionado, FormCrearLibro va a saber que se trata de una modificación y no una creación.
+                 */
                 var formCrearLibro = new FormCrearLibro(_libroService, _autorService, _editorialService, _generosService, libroSeleccionado);
                 formCrearLibro.ShowDialog();
 
-                // Refrescar la lista de libros después de modificar
+                // Refrescamos la lista de libros después de modificar
                 buttonACTUALIZAR_Click(null, null);
             }
             else
@@ -197,11 +206,11 @@ namespace Biblioteca_Winform_v1
             {
                 try
                 {
-                    // Obtener la fila seleccionada
+                    // Obtenemos la fila seleccionada. Se extrae el Id del seleccionado.
                     var filaSeleccionada = dataGridViewLibros.SelectedRows[0];
                     var libroId = Convert.ToInt32(filaSeleccionada.Cells["Id"].Value);
 
-                    // Obtener detalles del libro
+                    // Obtenemos detalles del libro seleccionado
                     var libro = await _libroService.GetLibroByIdAsync(libroId);
 
                     if (libro == null)
@@ -210,10 +219,10 @@ namespace Biblioteca_Winform_v1
                         return;
                     }
 
-                    // Alternar el estado del campo Eliminado
-                    libro.Eliminado = !libro.Eliminado; // Alternar estado
+                    // Alternamos la variable eliminado
+                    libro.Eliminado = !libro.Eliminado; 
 
-                    // Actualizar el libro usando el método ModificarLibroAsync
+                    // Actualizamos el libro usando ModificarLibroAsync
                     await _libroService.ModificarLibroAsync(libro);
 
                     // Mostrar mensaje de confirmación
@@ -221,7 +230,7 @@ namespace Biblioteca_Winform_v1
 
                     MessageBox.Show($"El libro ha sido {accion} exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Actualizar la tabla
+                    // Actualizamois la tabla
                     buttonACTUALIZAR_Click(null, null);
                 }
                 catch (Exception ex)
@@ -251,7 +260,7 @@ namespace Biblioteca_Winform_v1
 
         private void librosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ya estamos en libros, no hace nada
+            // Ya estamos en libros, no hace nada
         }
 
         private void usuariosToolStripMenuItem_Click(object sender, EventArgs e)
@@ -277,7 +286,7 @@ namespace Biblioteca_Winform_v1
 
         private void chkMostrarEliminadosLibros_CheckedChanged(object sender, EventArgs e)
         {
-            _mostrarEliminados = chkMostrarEliminadosLibros.Checked; // Actualizar la bandera
+            _mostrarEliminados = chkMostrarEliminadosLibros.Checked; // Actualizar la flag
             buttonACTUALIZAR_Click(sender, e); // Actualizar la lista
         }
 

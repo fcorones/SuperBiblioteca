@@ -11,11 +11,6 @@ namespace BibliotecaDeClasesWinformYBlazor
     {
         private static HttpClient _httpClient;
 
-        /// <summary>
-        /// Inicializa o devuelve una instancia de HttpClient preconfigurada.
-        /// </summary>
-        /// <param name="jwtToken">El token JWT (puede ser null si no se requiere autorización).</param>
-        /// <returns>Instancia configurada de HttpClient.</returns>
         public static HttpClient GetHttpClient(string jwtToken = null)
         {
             if (_httpClient == null)

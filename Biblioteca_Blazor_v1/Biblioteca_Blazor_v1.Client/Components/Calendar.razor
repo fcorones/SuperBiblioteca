@@ -89,6 +89,9 @@
     [Parameter]
     public EventCallback<DateTime> OnDateSelected { get; set; }
 
+    /*
+     * Tomamos la configuración regional del sistema y convertimos los nombres a 2 carácteres
+     */
     private List<string> DaysOfWeek => CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames.Select(d => d.Substring(0, 2)).ToList();
     private List<CalendarDay> Days { get; set; } = new List<CalendarDay>();
 
@@ -99,28 +102,42 @@
 
     private void GenerateCalendar()
     {
+        //Limpiamos los días anteriores por si quedaron algunos
         Days.Clear();
+        //Calculamos el 1º dia del mes
         var firstDayOfMonth = new DateTime(CurrentDate.Year, CurrentDate.Month, 1);
+        //Calculamos al cantidad de días en el mes
         var daysInMonth = DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month);
 
+        //Según la región obtenemos el 1º dia de la semana
         var firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+        //Averiguamos en qué día de la semana cae el 1º día del mes
         var startDay = (int)firstDayOfMonth.DayOfWeek - (int)firstDayOfWeek;
-        if (startDay < 0) startDay += 7;
+        if (startDay < 0) startDay += 7;    //Calculamos espacios vacíos antes del 1º día
 
-        // Días vacíos iniciales
+        //Agregamos días vacios al principio del 1º día del mes
+        //para que el mes quede encuadrado en su lugar
         for (int i = 0; i < startDay; i++)
         {
             Days.Add(new CalendarDay { Date = DateTime.MinValue });
         }
 
-        // Días del mes
+        //Rellenamos con el resto de los días. Se recorre del 1º al último día del mes.
         for (int i = 1; i <= daysInMonth; i++)
         {
+            //Generamos un nuevo día
             var date = new DateTime(CurrentDate.Year, CurrentDate.Month, i);
+            //Verificamos si está ocupado ese día
             bool isOccupied = OccupiedDates.Contains(date);
+            //Bool para saber si está seleccionado
             bool isSelected = false;
 
-            // Lógica de selección actualizada
+            /*Lógica de selección:
+             *  Si solo hay fecha de retiro, se marca ese día
+             *  Si solo hay fecha de devolución, se marca ese día
+             *  Si están las 2 fechas, se evalua si el día se encuentra dentro del rango
+             *   y se marca como seleccionado
+             */
             if (FechaRetiroSeleccionada.HasValue && FechaDevolucionSeleccionada.HasValue)
             {
                 var start = FechaRetiroSeleccionada.Value.Date;
@@ -136,7 +153,7 @@
                 isSelected = date == FechaDevolucionSeleccionada.Value.Date;
             }
 
-            Days.Add(new CalendarDay
+            Days.Add(new CalendarDay    //Agrega al calendario
                 {
                     Date = date,
                     IsOccupied = isOccupied,
@@ -144,13 +161,19 @@
                 });
         }
 
-        // Completar semana
+        //Se agregan más días vacios (MinValue) si la última semana
+        //no tiene 7 días completos. Mantiene la cuadrícula
         while (Days.Count % 7 != 0)
         {
             Days.Add(new CalendarDay { Date = DateTime.MinValue });
         }
     }
 
+    /* Ejecutado al seleccionar un día en el calendario. Si ese día está
+     * vacío (Minvalue) no hace nada.
+     * LLama a OnDateSelect notificando al padre que se seleccionó una fecha
+     * Esto permite que ReservarLibro maneje la selección de fechas
+     */
     private void SelectDate(DateTime date)
     {
         if (date == DateTime.MinValue)
@@ -159,19 +182,28 @@
         OnDateSelected.InvokeAsync(date);
     }
 
-    private async Task PreviousMonth()
+    private async Task PreviousMonth() //Cuando el usuario presiona << para volver atrás un mes
     {
         CurrentDate = CurrentDate.AddMonths(-1);
-        await CurrentDateChanged.InvokeAsync(CurrentDate); // <- Notificar al padre
+        await CurrentDateChanged.InvokeAsync(CurrentDate); //Notificación al padre
         GenerateCalendar();
     }
 
-    private async Task NextMonth()
+    private async Task NextMonth() //Cuando el usuario presiona >> para adelantar un mes
     {
         CurrentDate = CurrentDate.AddMonths(1);
-        await CurrentDateChanged.InvokeAsync(CurrentDate); // <- Notificar al padre
+        await CurrentDateChanged.InvokeAsync(CurrentDate); //Notificación al padre
         GenerateCalendar();
     }
+
+    /* Notificaciones al padre (ReservarLibro): Mantiene la sincronización
+     * Cuando Calendar selecciona una fecha, el padre tiene que enterarse:
+     *  - actualiza la vista
+     *  - mantiene seleccion de fechas
+     */
+
+
+
 
     private class CalendarDay
     {

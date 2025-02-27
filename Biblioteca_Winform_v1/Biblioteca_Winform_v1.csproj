@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\..\..\bibliotecaVirtual\SuperBiblioteca\BibliotecaDeClasesWinformYBlazor\BibliotecaDeClasesWinformYBlazor.csproj" />
+	  <ProjectReference Include="..\..\Blazor_Y_Winform\BibliotecaDeClasesWinformYBlazor\BibliotecaDeClasesWinformYBlazor.csproj" />
   </ItemGroup>
 
   <ItemGroup>
