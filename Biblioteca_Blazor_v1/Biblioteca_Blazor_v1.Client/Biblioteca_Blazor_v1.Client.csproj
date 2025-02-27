@@ -19,4 +19,10 @@
     <ProjectReference Include="..\..\BibliotecaDeClasesWinformYBlazor\BibliotecaDeClasesWinformYBlazor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="PROXIMOS PASOS.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
 </Project>

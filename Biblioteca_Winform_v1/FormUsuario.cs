@@ -90,7 +90,8 @@ namespace Biblioteca_Winform_v1
 
                 if (checkUsrPedidos.Checked)
                 {
-                    usuarios = usuarios.Where(u => prestamos.Any(p => p.UsuarioId == u.Id && p.Activo)).ToList();
+                    // Filtrar usuarios con préstamos retirados
+                    usuarios = usuarios.Where(u => prestamos.Any(p => p.UsuarioId == u.Id && p.Estado == EstadoPrestamo.Retirado)).ToList(); // Cambiar aquí
                 }
 
                 // Preparar los datos para mostrar
@@ -274,7 +275,7 @@ namespace Biblioteca_Winform_v1
                             prestamo.FechaPrestamo,
                             prestamo.FechaDevolucion,
                             prestamo.Eliminado,
-                            prestamo.Activo,
+                            prestamo.Estado,
                             UsuarioNombre = usuarios.FirstOrDefault(u => u.Id == prestamo.UsuarioId)?.Nombre ?? "Desconocido",
                             LibroNombre = libros.FirstOrDefault(l => l.Id == prestamo.LibroId)?.Titulo ?? "Desconocido",
                             LibroNombreEspaniol = libros.FirstOrDefault(l => l.Id == prestamo.LibroId)?.TituloEspaniol ?? "N/A"

@@ -14,7 +14,7 @@ namespace BibliotecaDeClasesWinformYBlazor.Models
         public DateTime FechaDevolucion { get; set; }
 
         public bool Eliminado { get; set; } = false;
-        public bool Activo { get; set; } = false;
+        public EstadoPrestamo Estado { get; set; }
         public int UsuarioId { get; set; }
         public int LibroId { get; set; }
 

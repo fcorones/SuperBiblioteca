@@ -76,7 +76,8 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
 
             if (libro != null)
             {
-                libro.BoolPrestado = prestamo.Activo; // Si el préstamo está activo, el libro está prestado
+                // Si el préstamo está en estado "Retirado", el libro está prestado
+                libro.BoolPrestado = prestamo.Estado == EstadoPrestamo.Retirado;
                 await libroService.ModificarLibroAsync(libro);
             }
         }

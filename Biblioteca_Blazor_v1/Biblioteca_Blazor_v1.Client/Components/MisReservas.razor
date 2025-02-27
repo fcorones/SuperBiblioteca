@@ -187,8 +187,10 @@
 
                     <div class="reserva-detail">
                         <span class="reserva-label">Estado:</span>
-                        <span class="status-badge @(reserva.Activo ? "status-active" : "status-inactive")">
-                            @(reserva.Activo ? "Retirado" : "No retirado")
+                        <span class="status-badge @(reserva.Estado == EstadoPrestamo.Retirado ? "status-active" : "status-inactive")">
+                            @(reserva.Estado == EstadoPrestamo.Retirado ? "Retirado" :
+                                reserva.Estado == EstadoPrestamo.Reservado ? "Reservado" :
+                                "Devuelto")
                         </span>
                     </div>
                 </div>
@@ -224,25 +226,24 @@
             Console.WriteLine($"[MisReservas] Libros cargados: {libros?.Count ?? 0}");
 
             // Filtrar los préstamos del usuario logeado
-                 reservas = prestamos?
-                .Where(p => p.UsuarioId == usuarioId && !p.Eliminado)
-                .Select(p =>
-                {
-                    var libro = libros?.FirstOrDefault(l => l.Id == p.LibroId);
-                    return new ReservaViewModel
-                        {
-                            Id = p.Id,
-                            FechaPrestamo = p.FechaPrestamo,
-                            FechaDevolucion = p.FechaDevolucion,
-                            Activo = p.Activo,
-                            LibroNombre = libro?.Titulo ?? "Desconocido",
-                            NombreAutor = libro?.NombreAutor ?? "Desconocido",
-                            AnioDePublicacion = libro?.AnioDePublicacion.ToString() ?? "Desconocido",
-                            NombreEditorial = libro?.NombreEditorial ?? "Desconocido"
-
-                        };
-                })
-                .ToList();
+            reservas = prestamos?
+           .Where(p => p.UsuarioId == usuarioId && !p.Eliminado)
+           .Select(p =>
+           {
+               var libro = libros?.FirstOrDefault(l => l.Id == p.LibroId);
+               return new ReservaViewModel
+               {
+                   Id = p.Id,
+                   FechaPrestamo = p.FechaPrestamo,
+                   FechaDevolucion = p.FechaDevolucion,
+                   Estado = p.Estado,
+                   LibroNombre = libro?.Titulo ?? "Desconocido",
+                   NombreAutor = libro?.NombreAutor ?? "Desconocido",
+                   AnioDePublicacion = libro?.AnioDePublicacion.ToString() ?? "Desconocido",
+                   NombreEditorial = libro?.NombreEditorial ?? "Desconocido"
+               };
+           })
+           .ToList();
 
 
             Console.WriteLine($"[MisReservas] Reservas filtradas: {reservas.Count}");
@@ -258,11 +259,10 @@
         public int Id { get; set; }
         public DateTime FechaPrestamo { get; set; }
         public DateTime FechaDevolucion { get; set; }
-        public bool Activo { get; set; }
+        public EstadoPrestamo Estado { get; set; } // Cambiar aquí
         public string LibroNombre { get; set; }
         public string NombreAutor { get; set; }
         public string AnioDePublicacion { get; set; }
         public string NombreEditorial { get; set; }
-
     }
 }

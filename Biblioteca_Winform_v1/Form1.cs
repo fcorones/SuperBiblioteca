@@ -61,9 +61,8 @@ namespace Biblioteca_Winform_v1
                     var libro = libros.FirstOrDefault(l => l.Id == prestamo.LibroId);
                     if (libro != null)
                     {
-                        // Recorremos todos los libros de los prestamos.
-                        // Actualizamos el bool "Prestado" de cada libro en base a los prestamos existentes
-                        var nuevoEstado = prestamo.Activo;
+                        // Actualizamos el bool "Prestado" de cada libro en base al estado del préstamo
+                        var nuevoEstado = prestamo.Estado == EstadoPrestamo.Retirado; // true si es Retirado, false en otros casos
                         if (libro.BoolPrestado != nuevoEstado)
                         {
                             libro.BoolPrestado = nuevoEstado;

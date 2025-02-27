@@ -91,31 +91,31 @@ namespace Biblioteca_Winform_v1
         {
             try
             {
-                //Obtener la lista de préstamos desde la API
+                // Obtener la lista de préstamos desde la API
                 var prestamos = await _prestamoService.GetPrestamosAsync();
 
-                //Filtrar eliminados
+                // Filtrar eliminados
                 if (!_mostrarEliminados)
                 {
                     prestamos = prestamos.Where(p => !p.Eliminado).ToList();
                 }
 
-                //Filtrar por pedidos activos si el CheckBox está marcado
+                // Filtrar por pedidos retirados si el CheckBox está marcado
                 if (chkMostrarActivos.Checked)
                 {
-                    prestamos = prestamos.Where(p => p.Activo).ToList();
+                    prestamos = prestamos.Where(p => p.Estado == EstadoPrestamo.Retirado).ToList(); // Cambiar aquí
                 }
 
-                //Obtener más info
+                // Obtener más info
                 var usuarios = await _usuarioService.GetUsuariosAsync();
                 var libros = await _libroService.GetLibrosAsync();
 
-                //Transformar los datos para mostrarlos en el DataGridView
+                // Transformar los datos para mostrarlos en el DataGridView
                 var prestamosParaMostrar = prestamos.Select(prestamo => new
                 {
                     prestamo.Id,
                     prestamo.Eliminado,
-                    prestamo.Activo,
+                    Estado = prestamo.Estado, // Cambiar aquí
                     LibroNombre = libros.FirstOrDefault(l => l.Id == prestamo.LibroId)?.Titulo ?? "Desconocido",
                     LibroNombreEspaniol = libros.FirstOrDefault(l => l.Id == prestamo.LibroId)?.TituloEspaniol ?? "N/A",
                     prestamo.LibroId,
@@ -126,15 +126,15 @@ namespace Biblioteca_Winform_v1
                     prestamo.FechaPrestamo,
                     prestamo.FechaDevolucion
                 })
-                //Primero los no eliminados, luego los eliminados 
+                // Primero los no eliminados, luego los eliminados 
                 .OrderBy(prestamo => prestamo.Eliminado)
                 .ThenBy(prestamo => prestamo.Id)
                 .ToList();
 
-                //Asignar la lista transformada al DataGridView
+                // Asignar la lista transformada al DataGridView
                 dataGridViewPedidos.DataSource = prestamosParaMostrar;
 
-                //Personalizar encabezados de columnas
+                // Personalizar encabezados de columnas
                 dataGridViewPedidos.Columns["Id"].HeaderText = "ID";
                 dataGridViewPedidos.Columns["FechaPrestamo"].HeaderText = "Fecha de Préstamo";
                 dataGridViewPedidos.Columns["FechaDevolucion"].HeaderText = "Fecha de Devolución";
@@ -146,52 +146,35 @@ namespace Biblioteca_Winform_v1
                 dataGridViewPedidos.Columns["LibroId"].HeaderText = "ID Libro";
                 dataGridViewPedidos.Columns["UsuarioId"].HeaderText = "ID Usuario";
 
-
                 dataGridViewPedidos.Columns["Id"].Width = 50;
                 dataGridViewPedidos.Columns["Eliminado"].Width = 65;
-                dataGridViewPedidos.Columns["Activo"].Width = 65;
+                dataGridViewPedidos.Columns["Estado"].Width = 100; // Cambiar aquí
                 dataGridViewPedidos.Columns["LibroId"].Width = 50;
                 dataGridViewPedidos.Columns["NumeroEdicion"].Width = 50;
                 dataGridViewPedidos.Columns["UsuarioId"].Width = 50;
                 dataGridViewPedidos.Columns["LibroNombre"].Width = 220;
                 dataGridViewPedidos.Columns["LibroNombreEspaniol"].Width = 220;
 
-
-
-                if (dataGridViewPedidos.Columns["Activo"] != null) //Config de la columna Activo (retirado)
+                // Configurar la columna Estado
+                if (dataGridViewPedidos.Columns["Estado"] != null)
                 {
-                    var columnaActivo = dataGridViewPedidos.Columns["Activo"];
-                    columnaActivo.HeaderText = "Retirado";
-                    columnaActivo.Visible = true;       
-                    columnaActivo.ReadOnly = true;
+                    var columnaEstado = dataGridViewPedidos.Columns["Estado"];
+                    columnaEstado.HeaderText = "Estado";
+                    columnaEstado.Visible = true;
+                    columnaEstado.ReadOnly = true;
 
-                    //Forzamos a checkbox
-                    if (!(columnaActivo is DataGridViewCheckBoxColumn))
-                    {
-                        var checkBoxColumn = new DataGridViewCheckBoxColumn
-                        {
-                            Name = "Activo",
-                            HeaderText = "Activo",
-                            DataPropertyName = "Activo",
-                            ReadOnly = true
-                        };
-
-                        //Reemplazar la columna existente con la columna de CheckBox
-                        var index = dataGridViewPedidos.Columns["Activo"].Index;
-                        dataGridViewPedidos.Columns.Remove("Activo");
-                        dataGridViewPedidos.Columns.Insert(index, checkBoxColumn);
-                    }
+                    // Formatear el valor del estado como texto
+                    columnaEstado.DefaultCellStyle.Format = "G"; // Mostrar el nombre del enum
                 }
 
                 if (dataGridViewPedidos.Columns["Separador1"] != null)
                     dataGridViewPedidos.Columns.Remove("Separador1");
 
                 if (dataGridViewPedidos.Columns["Separador2"] != null)
-                    dataGridViewPedidos.Columns.Remove("Separador2");           //Separadores en blanco para que quede más lindo
+                    dataGridViewPedidos.Columns.Remove("Separador2");
 
                 dataGridViewPedidos.Columns.Insert(3, new DataGridViewTextBoxColumn { Name = "Separador1", HeaderText = "", ReadOnly = true, Width = 35 });
                 dataGridViewPedidos.Columns.Insert(9, new DataGridViewTextBoxColumn { Name = "Separador2", HeaderText = "", ReadOnly = true, Width = 35 });
-
             }
             catch (Exception ex)
             {
@@ -211,7 +194,7 @@ namespace Biblioteca_Winform_v1
         }
 
 
-        private async void buttonMODIFICAR_Pedido_Click(object sender, EventArgs e) //MODIFICAR == Retirado/No retirado
+        private async void buttonMODIFICAR_Pedido_Click(object sender, EventArgs e)
         {
             if (dataGridViewPedidos.SelectedRows.Count > 0)
             {
@@ -220,19 +203,30 @@ namespace Biblioteca_Winform_v1
                     var filaSeleccionada = dataGridViewPedidos.SelectedRows[0];
                     var prestamoId = Convert.ToInt32(filaSeleccionada.Cells["Id"].Value);
 
-                    var prestamo = await _prestamoService.GetPrestamoByIdAsync(prestamoId); //Obtenemos los datos del prestamo
+                    var prestamo = await _prestamoService.GetPrestamoByIdAsync(prestamoId); // Obtener los datos del préstamo
                     if (prestamo == null)
                     {
                         MessageBox.Show("No se pudo encontrar el préstamo seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    //Invertimos el estado de "Activo" del préstamo
-                    prestamo.Activo = !prestamo.Activo;
-                    await _prestamoService.ModificarPrestamoAsync(prestamo); //PUT de los cambios
+                    // Cambiar el estado del préstamo
+                    if (prestamo.Estado == EstadoPrestamo.Reservado)
+                    {
+                        prestamo.Estado = EstadoPrestamo.Retirado; // Cambiar a Retirado
+                    }
+                    else if (prestamo.Estado == EstadoPrestamo.Retirado)
+                    {
+                        prestamo.Estado = EstadoPrestamo.Devuelto; // Cambiar a Devuelto
+                    }
+                    else
+                    {
+                        prestamo.Estado = EstadoPrestamo.Reservado; // Cambiar a Reservado
+                    }
 
-                    string estado = prestamo.Activo ? "retirado" : "no retirado";
-                    MessageBox.Show($"El préstamo ha marcado como {estado} exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await _prestamoService.ModificarPrestamoAsync(prestamo); // PUT de los cambios
+
+                    MessageBox.Show($"El préstamo ha sido actualizado a {prestamo.Estado} exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Actualizar la lista de préstamos en el formulario
                     btnActualizar_Pedido_Click(null, null);
@@ -248,7 +242,7 @@ namespace Biblioteca_Winform_v1
             }
         }
 
-        private async Task SincronizarEstadoLibrosAsync() //Sincroniza si está prestado o no
+        private async Task SincronizarEstadoLibrosAsync()
         {
             var prestamos = await _prestamoService.GetPrestamosAsync();
             var libros = await _libroService.GetLibrosAsync();
@@ -258,7 +252,7 @@ namespace Biblioteca_Winform_v1
                 var libro = libros.FirstOrDefault(l => l.Id == prestamo.LibroId);
                 if (libro != null)
                 {
-                    libro.BoolPrestado = prestamo.Activo;
+                    libro.BoolPrestado = prestamo.Estado == EstadoPrestamo.Retirado; 
                     await _libroService.ModificarLibroAsync(libro);
                 }
             }

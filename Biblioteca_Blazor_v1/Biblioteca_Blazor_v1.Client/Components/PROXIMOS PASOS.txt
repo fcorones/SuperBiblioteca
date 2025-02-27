@@ -1,0 +1,40 @@
+﻿PROXIMOS PASOS
+
+- como ahora Estado tiene 3 estados: reservado, retirado, devuelto
+	que cuando se ponga "devuelto", eliminar el pedido automáticamente. tanto en blazor del usuario como en el winform
+
+- idea: hacer botones para variar entre los 3 estados?
+
+- eliminar el sistema de cartas en MisReservas y reemplazarlo por un grid o algo así
+
+
+
+
+
+
+--------------------CLASE CONSULTA .NET 19-02-2025
+[[[[[[[[[[BLAZOR]]]]]]]]]]
+1. Cargar imágenes de los libros al scrollear. Usar llamadas asincrónicas (evita que se quede esperando la carga de 10 libros)
+
+
+
+2. La página MisReservas no tiene sentido. Hacer un historial en formato tabla con los libros que saqué y los que voy a sacar.
+		No convienen las "cartas" para Web. Conviene usarlas solo con imágenes. Conviene en ese caso hacer una grilla.
+	    Botón cancelar reserva (Va dentro de MisReservas)
+
+3. Marcar fecha límite si no se devolvió. No dejar crear otro.
+
+
+[[[[[[[[[[WINFORM]]]]]]]]]]
+1. Que los filtros del WinForm sean un OR, que no excluya ( o que sean un AND? no entendí, pero que no excluya basicamente)
+
+2. Modificar botones del winform: en vez de "CREAR" en Libros, poner "CREAR LIBRO".
+
+3. Botones de filtros en el winform bugeados.
+
+4. Arreglar la resolución ventana de formCrearPrestamo
+
+5. Colocar 1 solo calendario en formCrearPrestamo, no 4.
+
+6. Reemplazar el campo "Activo". Hacer 1 solo campo con 3 valores: Retirado, reservado, y devuelto
+

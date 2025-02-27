@@ -149,22 +149,23 @@ namespace Biblioteca_Winform_v1
                     .Where(p => p.LibroId == libroId && !p.Eliminado)
                     .ToList();
 
-                // Verificar si hay préstamos activos para el libro
+                // Verificar si hay préstamos para el libro
                 if (prestamosLibro.Any())
                 {
-                    var prestamosActivos = prestamosLibro
-                        .Where(p => p.Activo)
+                    // Buscar préstamos en estado "Retirado" (activos)
+                    var prestamosRetirados = prestamosLibro
+                        .Where(p => p.Estado == EstadoPrestamo.Retirado) // Cambiar aquí
                         .OrderBy(p => p.FechaPrestamo) // Ordenar por fecha de préstamo
                         .ToList();
 
-                    if (prestamosActivos.Any())
+                    if (prestamosRetirados.Any())
                     {
-                        var prestamo = prestamosActivos.First(); // Tomar el más reciente activo
+                        var prestamo = prestamosRetirados.First(); // Tomar el más reciente retirado
                         lblEstadoPrestamo.Text = $"Libro en préstamo desde: {prestamo.FechaPrestamo:dd/MM/yyyy} hasta {prestamo.FechaDevolucion:dd/MM/yyyy}";
                     }
                     else
                     {
-                        lblEstadoPrestamo.Text = "Este libro tiene préstamos registrados, pero no hay préstamos activos.";
+                        lblEstadoPrestamo.Text = "Este libro tiene préstamos registrados, pero no hay préstamos retirados.";
                     }
                 }
                 else
@@ -262,7 +263,7 @@ namespace Biblioteca_Winform_v1
                     FechaDevolucion = fechaDevolucion,
                     UsuarioId = usuarioId,
                     LibroId = libroId,
-                    Activo = false, 
+                    Estado = EstadoPrestamo.Reservado, 
                     Eliminado = false
                 };
 
@@ -374,7 +375,7 @@ namespace Biblioteca_Winform_v1
                         prestamo.FechaPrestamo,
                         prestamo.FechaDevolucion,
                         prestamo.Eliminado,
-                        prestamo.Activo,
+                        prestamo.Estado,
                         UsuarioNombre = usuarios.FirstOrDefault(u => u.Id == prestamo.UsuarioId)?.Nombre ?? "Desconocido",
                         LibroNombre = libros.FirstOrDefault(l => l.Id == prestamo.LibroId)?.Titulo ?? "Desconocido",
                         LibroNombreEspaniol = libros.FirstOrDefault(l => l.Id == prestamo.LibroId)?.TituloEspaniol ?? "N/A"

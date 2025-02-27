@@ -25,7 +25,7 @@ namespace Biblioteca_Winform_v1
                 dataGridViewReservas.Columns["FechaPrestamo"].HeaderText = "Fecha Préstamo";
                 dataGridViewReservas.Columns["FechaDevolucion"].HeaderText = "Fecha Devolución";
                 dataGridViewReservas.Columns["Eliminado"].HeaderText = "Eliminado";
-                dataGridViewReservas.Columns["Activo"].HeaderText = "Activo";
+                //dataGridViewReservas.Columns["Activo"].HeaderText = "Activo";
                 dataGridViewReservas.Columns["UsuarioNombre"].HeaderText = "Usuario";
                 dataGridViewReservas.Columns["LibroNombre"].HeaderText = "Libro (Original)";
                 dataGridViewReservas.Columns["LibroNombreEspaniol"].HeaderText = "Libro (Español)";
