@@ -256,7 +256,7 @@
                     <i class="bi bi-funnel"></i>
                     Filtros básicos
                 </div>
-                <select class="select-filter" @bind="SelectedEditorial">
+                <select class="select-filter" @bind="SelectedEditorial" >
                     <option value="">Todas las editoriales</option>
                     @foreach (var editorial in AllEditoriales)
                     {
@@ -264,7 +264,7 @@
                     }
                 </select>
 
-                <select class="select-filter" @bind="SelectedAutor">
+                <select class="select-filter" @bind="SelectedAutor" @bind:event="onchange">
                     <option value="">Todos los autores</option>
                     @foreach (var autor in AllAutores)
                     {
@@ -290,6 +290,13 @@
                            @oninput="(_ => FilterLibros())" />
                 </div>
             </div>
+
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <div class="alert alert-danger mt-2">
+                    @_errorMessage
+                </div>
+            }
 
             <div class="filter-group">
                 <div class="filter-title">
@@ -427,36 +434,70 @@
     private List<Libro> FilteredLibros = new List<Libro>();
     private string SearchTerm = string.Empty;
     private bool isLoading = true;
-
+    private string _errorMessage;
     // Filtros
     private List<string> AllEditoriales = new List<string>();
     private List<string> AllAutores = new List<string>();
     private List<string> AllGeneros = new List<string>();
-    private string SelectedEditorial;
-    private string SelectedAutor;
     private List<string> SelectedGeneros = new List<string>();
     private int? _minYear;
     private int? _maxYear;
+
+    private string _selectedEditorial;
+    private string SelectedEditorial
+    {
+        get => _selectedEditorial;
+        set
+        {
+            _selectedEditorial = value;
+            FilterLibros(); // <----- Ejecutar filtro al cambiar
+        }
+    }
+
+    private string _selectedAutor;
+    private string SelectedAutor
+    {
+        get => _selectedAutor;
+        set
+        {
+            _selectedAutor = value;
+            FilterLibros(); // <----- Ejecutar filtro al cambiar
+        }
+    }
 
     private int? MinYear
     {
         get => _minYear;
         set
         {
+            if (value.HasValue && MaxYear.HasValue && value > MaxYear)
+            {
+                _errorMessage = "El año mínimo no puede ser mayor que el año máximo.";
+                return; // No actualizar el valor
+            }
+            _errorMessage = null; // Limpiar el mensaje de error
             _minYear = value;
-            FilterLibros();
+            FilterLibros(); // Aplicar filtros
         }
     }
+
 
     private int? MaxYear
     {
         get => _maxYear;
         set
         {
+            if (value.HasValue && MinYear.HasValue && value < MinYear)
+            {
+                _errorMessage = "El año máximo no puede ser menor que el año mínimo.";
+                return; // No actualizar el valor
+            }
+            _errorMessage = null; // Limpiar el mensaje de error
             _maxYear = value;
-            FilterLibros();
+            FilterLibros(); // Aplicar filtros
         }
     }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -509,7 +550,7 @@
         // Filtro por autor
         if (!string.IsNullOrEmpty(SelectedAutor))
             query = query.Where(l => l.NombreAutor == SelectedAutor);
-
+        
         // Filtro por géneros
         if (SelectedGeneros.Any())
             query = query.Where(l => SelectedGeneros.All(g => l.NombresGeneros.Contains(g)));
