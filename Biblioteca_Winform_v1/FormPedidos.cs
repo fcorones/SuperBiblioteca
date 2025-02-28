@@ -25,7 +25,7 @@ namespace Biblioteca_Winform_v1
         public FormPedidos()
         {
             InitializeComponent();
-             //Instancia de AuthContext para obtener el token.
+            //Instancia de AuthContext para obtener el token.
             var authContext = new AuthContext();
             //Se toma el token del context.
             authContext.UserToken = AuthContext.GetGlobalToken();
@@ -252,7 +252,7 @@ namespace Biblioteca_Winform_v1
                 var libro = libros.FirstOrDefault(l => l.Id == prestamo.LibroId);
                 if (libro != null)
                 {
-                    libro.BoolPrestado = prestamo.Estado == EstadoPrestamo.Retirado; 
+                    libro.BoolPrestado = prestamo.Estado == EstadoPrestamo.Retirado;
                     await _libroService.ModificarLibroAsync(libro);
                 }
             }
@@ -328,5 +328,56 @@ namespace Biblioteca_Winform_v1
             var loginForm = new Login(_authContext);
             loginForm.Show();
         }
+
+        private void comboBoxEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void buttonCambiarEstado_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewPedidos.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    var filaSeleccionada = dataGridViewPedidos.SelectedRows[0];
+                    var prestamoId = Convert.ToInt32(filaSeleccionada.Cells["Id"].Value);
+
+                    var prestamo = await _prestamoService.GetPrestamoByIdAsync(prestamoId);
+                    if (prestamo == null)
+                    {
+                        MessageBox.Show("No se pudo encontrar el préstamo seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Determinar el nuevo estado según el ComboBox
+                    EstadoPrestamo nuevoEstado = EstadoPrestamo.Reservado;
+                    if (comboBoxEstado.SelectedItem.ToString() == "Retirado")
+                        nuevoEstado = EstadoPrestamo.Retirado;
+                    else if (comboBoxEstado.SelectedItem.ToString() == "Devuelto")
+                    {
+                        nuevoEstado = EstadoPrestamo.Devuelto;
+                        prestamo.Eliminado = true; // Eliminación lógica
+                    }
+
+                    // Aplicar cambios al préstamo
+                    prestamo.Estado = nuevoEstado;
+                    await _prestamoService.ModificarPrestamoAsync(prestamo);
+
+                    MessageBox.Show($"El estado del préstamo ha sido cambiado a {nuevoEstado}.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    btnActualizar_Pedido_Click(null, null); // Actualizar la lista de préstamos
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al actualizar el estado del préstamo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Por favor, selecciona un préstamo antes de cambiar el estado.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
     }
 }

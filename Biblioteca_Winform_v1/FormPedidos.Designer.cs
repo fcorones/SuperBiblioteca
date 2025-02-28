@@ -45,6 +45,8 @@
             génerosToolStripMenuItem = new ToolStripMenuItem();
             cerrarSesiónToolStripMenuItem = new ToolStripMenuItem();
             chkMostrarActivos = new CheckBox();
+            comboBoxEstado = new ComboBox();
+            buttonCambiarEstado = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewPedidos).BeginInit();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -83,9 +85,9 @@
             // 
             // buttonMODIFICAR_Pedido
             // 
-            buttonMODIFICAR_Pedido.Location = new Point(580, 560);
+            buttonMODIFICAR_Pedido.Location = new Point(35, 588);
             buttonMODIFICAR_Pedido.Name = "buttonMODIFICAR_Pedido";
-            buttonMODIFICAR_Pedido.Size = new Size(164, 67);
+            buttonMODIFICAR_Pedido.Size = new Size(75, 44);
             buttonMODIFICAR_Pedido.TabIndex = 10;
             buttonMODIFICAR_Pedido.Text = "MARCAR \r\nRETIRADO / NO RETIRADO";
             buttonMODIFICAR_Pedido.UseVisualStyleBackColor = true;
@@ -93,7 +95,7 @@
             // 
             // buttonELIMINAR_Pedido
             // 
-            buttonELIMINAR_Pedido.Location = new Point(760, 560);
+            buttonELIMINAR_Pedido.Location = new Point(591, 560);
             buttonELIMINAR_Pedido.Name = "buttonELIMINAR_Pedido";
             buttonELIMINAR_Pedido.Size = new Size(143, 67);
             buttonELIMINAR_Pedido.TabIndex = 11;
@@ -104,7 +106,7 @@
             // chkMostrarEliminados
             // 
             chkMostrarEliminados.AutoSize = true;
-            chkMostrarEliminados.Location = new Point(937, 591);
+            chkMostrarEliminados.Location = new Point(945, 585);
             chkMostrarEliminados.Name = "chkMostrarEliminados";
             chkMostrarEliminados.Size = new Size(173, 19);
             chkMostrarEliminados.TabIndex = 12;
@@ -193,7 +195,7 @@
             // chkMostrarActivos
             // 
             chkMostrarActivos.AutoSize = true;
-            chkMostrarActivos.Location = new Point(1116, 591);
+            chkMostrarActivos.Location = new Point(1135, 585);
             chkMostrarActivos.Name = "chkMostrarActivos";
             chkMostrarActivos.Size = new Size(161, 19);
             chkMostrarActivos.TabIndex = 15;
@@ -201,11 +203,34 @@
             chkMostrarActivos.UseVisualStyleBackColor = true;
             chkMostrarActivos.CheckedChanged += checkBox1_CheckedChanged;
             // 
+            // comboBoxEstado
+            // 
+            comboBoxEstado.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxEstado.FormattingEnabled = true;
+            comboBoxEstado.Items.AddRange(new object[] { "Reservado", "Retirado", "Devuelto" });
+            comboBoxEstado.Location = new Point(762, 568);
+            comboBoxEstado.Name = "comboBoxEstado";
+            comboBoxEstado.Size = new Size(121, 23);
+            comboBoxEstado.TabIndex = 16;
+            comboBoxEstado.SelectedIndexChanged += comboBoxEstado_SelectedIndexChanged;
+            // 
+            // buttonCambiarEstado
+            // 
+            buttonCambiarEstado.Location = new Point(762, 599);
+            buttonCambiarEstado.Name = "buttonCambiarEstado";
+            buttonCambiarEstado.Size = new Size(100, 23);
+            buttonCambiarEstado.TabIndex = 17;
+            buttonCambiarEstado.Text = "Cambiar Estado";
+            buttonCambiarEstado.UseVisualStyleBackColor = true;
+            buttonCambiarEstado.Click += buttonCambiarEstado_Click;
+            // 
             // FormPedidos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1344, 661);
+            Controls.Add(buttonCambiarEstado);
+            Controls.Add(comboBoxEstado);
             Controls.Add(chkMostrarActivos);
             Controls.Add(label1);
             Controls.Add(chkMostrarEliminados);
@@ -249,5 +274,7 @@
         private CheckBox checkBox1;
         private CheckBox chkMostrarActivos;
         private ToolStripMenuItem cerrarSesiónToolStripMenuItem;
+        private ComboBox comboBoxEstado;
+        private Button buttonCambiarEstado;
     }
 }
