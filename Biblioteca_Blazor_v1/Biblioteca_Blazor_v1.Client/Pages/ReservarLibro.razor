@@ -293,7 +293,7 @@ else
         }
     }
 
-    private async Task<bool> ValidarFechas() // Cambiar a async Task<bool>
+    private async Task<bool> ValidarFechas()
     {
         if (FechaRetiro == null || FechaDevolucion == null)
         {
@@ -329,6 +329,21 @@ else
         try
         {
             var prestamosUsuario = await PrestamoService.GetPrestamosAsync();
+
+            // Verificar si el usuario tiene préstamos vencidos
+            var tienePrestamosVencidos = prestamosUsuario
+                .Any(p => p.UsuarioId == AuthContext.UserId &&
+                          !p.Eliminado &&
+                          p.Estado == EstadoPrestamo.Retirado &&
+                          p.FechaDevolucion < DateTime.Today);
+
+            if (tienePrestamosVencidos)
+            {
+                MensajeError = "Tenés préstamos vencidos. Por favor, devolvé los libros pendientes antes de reservar uno nuevo.";
+                return false;
+            }
+
+            // Verificar límite de reservas activas
             var reservasActivas = prestamosUsuario
                 .Count(p => p.UsuarioId == AuthContext.UserId &&
                           !p.Eliminado &&

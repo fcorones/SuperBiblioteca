@@ -19,10 +19,19 @@
 
 
 2. La página MisReservas no tiene sentido. Hacer un historial en formato tabla con los libros que saqué y los que voy a sacar.
-		No convienen las "cartas" para Web. Conviene usarlas solo con imágenes. Conviene en ese caso hacer una grilla.
-	    Botón cancelar reserva (Va dentro de MisReservas)
+LISTO		No convienen las "cartas" para Web. Conviene usarlas solo con imágenes. Conviene en ese caso hacer una grilla.
+LISTO	    Botón cancelar reserva (Va dentro de MisReservas)
 
-3. Marcar fecha límite si no se devolvió. No dejar crear otro.
+		cancelar funciona. si está reservado permite marcarlo como Eliminado = true
+
+LISTO		necesitaria aplicar el historial, que si está eliminado y devuelto que se quede guardado en el historial o que lo muestre
+		porque cuando el gerente lo borra, chau, se va del historial del blazor
+
+PENDIENTE		tambien al recargar misreservas te pide devuelta el login nose porque
+
+
+
+LISTO 3. Marcar fecha límite si no se devolvió. No dejar crear otro.
 
 
 [[[[[[[[[[WINFORM]]]]]]]]]]

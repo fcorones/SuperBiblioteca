@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject PrestamoService PrestamoService
 @inject LibroService LibroService
+@inject IJSRuntime JSRuntime
 @using BibliotecaDeClasesWinformYBlazor.Models
 @using BibliotecaDeClasesWinformYBlazor.Servicios
 
@@ -17,182 +18,324 @@
     h3 {
         color: #2d2d2d;
         font-weight: 600;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         text-align: center;
-        font-size: 2rem;
+        font-size: 1.8rem;
         background: linear-gradient(135deg, #404040, #606060);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    .reservas-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem;
-    }
-
-    .reserva-card {
+    .status-section {
+        margin-bottom: 2rem;
         background: #ffffff;
-        border-radius: 12px;
         padding: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    .reserva-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    .table tr.vencido {
+        background-color: #ffebee; /* Fondo rojo claro */
     }
 
-    .reserva-header {
-        border-bottom: 2px solid #f0f0f0;
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
+        .table tr.vencido:hover {
+            background-color: #ffcdd2; /* Fondo rojo claro más oscuro al hacer hover */
+        }
+
+        .table tr.vencido td {
+            color: #c62828; /* Texto rojo oscuro */
+        }
+
+    .section-title {
+        font-size: 1.4rem;
+        color: #2d2d2d;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
-    .reserva-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #404040;
-        margin-bottom: 0.5rem;
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
     }
 
-    .reserva-detail {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-    min-height: 24px; /* Asegura que todas las filas tengan la misma altura */
-}
+        .table th {
+            background: #4a4a4a; /* Color sólido en lugar de gradiente */
+            color: white;
+            padding: 0.75rem;
+            font-weight: 500;
+            text-align: left;
+        }
 
-.reserva-label {
-    color: #606060;
-    font-weight: 500;
-    flex: 1;
-    min-width: 100px; /* Evita que los textos largos desplacen otros elementos */
-}
+        .table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
 
-.reserva-value {
-    color: #2d2d2d;
-    font-weight: 400;
-    flex: 2;
-    text-align: right;
-    min-height: 24px; /* Unifica la altura de los valores */
-    word-break: break-word; /* Evita que palabras largas desborden */
-}
+        .table tr:hover {
+            background-color: #f8f8f8;
+        }
 
-    .status-badge {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
+    .badge {
+        padding: 0.5em 0.75em;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 0.9em;
         font-weight: 500;
-        text-transform: uppercase;
     }
 
-    .status-active {
-        background: #e8f5e9;
-        color: #2e7d32;
+    .badge-reservado {
+        background: #fff3cd;
+        color: #856404;
     }
 
-    .status-inactive {
-        background: #ffebee;
-        color: #c62828;
+    .badge-retirado {
+        background: #d4edda;
+        color: #155724;
     }
+
+    .badge-devuelto {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .btn-cancelar {
+        background: linear-gradient(135deg, #dc3545, #bb2d3b);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+        .btn-cancelar:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+        }
 
     .loading-container {
         text-align: center;
-        padding: 2rem;
+        padding: 3rem;
     }
 
-    .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f0f0f0;
-        border-top-color: #606060;
+    .spinner {
+        width: 3rem;
+        height: 3rem;
+        border: 0.25em solid currentColor;
+        border-right-color: transparent;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
+        animation: spin 0.75s linear infinite;
     }
 
     @@keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 
-    .empty-state {
+    .empty-section {
         text-align: center;
-        padding: 3rem;
-        color: #606060;
-        font-size: 1.1rem;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        color: #6c757d;
     }
 
-    .empty-state-icon {
+    .empty-icon {
         font-size: 2.5rem;
         color: #e0e0e0;
         margin-bottom: 1rem;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .acciones-column {
+        width: 150px;
+        text-align: center;
+    }
+
+    .fecha-column {
+        width: 120px;
+    }
+
+    .estado-column {
+        width: 100px;
+    }
+
+    @@media (max-width: 768px) {
+        .table th,
+        .table td {
+            padding: 0.5rem;
+        }
+
+        .btn-cancelar {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
 </style>
 
 <div class="reservas-container">
-    <h3>Mis Reservas</h3>
+    <h3>Historial de Préstamos</h3>
 
     @if (reservas == null)
     {
         <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p>Cargando tus reservas...</p>
-        </div>
-    }
-    else if (!reservas.Any())
-    {
-        <div class="empty-state">
-            <span class="bi bi-journal-x empty-state-icon"></span>
-            <p>No tienes reservas activas</p>
+            <div class="spinner"></div>
+            <p class="mt-2">Cargando tus reservas...</p>
         </div>
     }
     else
     {
-        <div class="reservas-grid">
-            @foreach (var reserva in reservas)
+        <!-- Préstamos Reservados (Pendientes) -->
+        <div class="status-section">
+            <h4 class="section-title">
+                <span class="bi bi-clock"></span>
+                Préstamos Reservados
+            </h4>
+            @if (reservasPendientes.Any())
             {
-                <div class="reserva-card">
-                    <div class="reserva-header">
-                        <div class="reserva-title">@reserva.LibroNombre</div>
-                        <div class="reserva-detail">
-                            <span class="reserva-label">Autor:</span>
-                            <span class="reserva-value">@reserva.NombreAutor</span>
-                        </div>
-                        <div class="reserva-detail">
-                            <span class="reserva-label">Editorial:</span>
-                            <span class="reserva-value">@reserva.NombreEditorial</span>
-                        </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Autor</th>
+                                <th class="fecha-column">Reserva</th>
+                                <th class="fecha-column">Límite</th>
+                                <th class="estado-column">Estado</th>
+                                <th class="acciones-column">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reserva in reservasPendientes)
+                            {
+                                <tr>
+                                    <td>@reserva.LibroNombre</td>
+                                    <td>@reserva.NombreAutor</td>
+                                    <td>@reserva.FechaPrestamo.ToShortDateString()</td>
+                                    <td>@reserva.FechaDevolucion.ToShortDateString()</td>
+                                    <td>
+                                        <span class="badge badge-reservado">@reserva.Estado</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn-cancelar" @onclick="@(() => CancelarReserva(reserva.Id))">
+                                            Cancelar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-section">
+                    <span class="bi bi-journal-x empty-icon"></span>
+                    <p>No tienes reservas pendientes</p>
+                </div>
+            }
+        </div>
 
-                        <div class="reserva-detail">
-                            <span class="reserva-label">Año de Publicación:</span>
-                            <span class="reserva-value">@reserva.AnioDePublicacion</span>
-                        </div>
-                    </div>
+        <!-- Préstamos Activos (Retirados) -->
+        <div class="status-section">
+            <h4 class="section-title">
+                <span class="bi bi-book"></span>
+                Préstamos Activos
+            </h4>
+            @if (reservasActivas.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Autor</th>
+                                <th class="fecha-column">Retirado</th>
+                                <th class="fecha-column">Devolución</th>
+                                <th class="estado-column">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reserva in reservasActivas)
+                            {
+                                <tr class="@(reserva.EstaVencido ? "vencido" : "")">
+                                    <td>@reserva.LibroNombre</td>
+                                    <td>@reserva.NombreAutor</td>
+                                    <td>@reserva.FechaPrestamo.ToShortDateString()</td>
+                                    <td>@reserva.FechaDevolucion.ToShortDateString()</td>
+                                    <td>
+                                        <span class="badge badge-retirado">@reserva.Estado</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-section">
+                    <span class="bi bi-journal-x empty-icon"></span>
+                    <p>No tienes préstamos activos</p>
+                </div>
+            }
+        </div>
 
-                    <div class="reserva-detail">
-                        <span class="reserva-label">Préstamo:</span>
-                        <span class="reserva-value">@reserva.FechaPrestamo.ToShortDateString()</span>
-                    </div>
-
-                    <div class="reserva-detail">
-                        <span class="reserva-label">Devolución:</span>
-                        <span class="reserva-value">@reserva.FechaDevolucion.ToShortDateString()</span>
-                    </div>
-
-                    <div class="reserva-detail">
-                        <span class="reserva-label">Estado:</span>
-                        <span class="status-badge @(reserva.Estado == EstadoPrestamo.Retirado ? "status-active" : "status-inactive")">
-                            @(reserva.Estado == EstadoPrestamo.Retirado ? "Retirado" :
-                                reserva.Estado == EstadoPrestamo.Reservado ? "Reservado" :
-                                "Devuelto")
-                        </span>
-                    </div>
+        <!-- Histórico de Préstamos (Devueltos) -->
+        <div class="status-section">
+            <h4 class="section-title">
+                <span class="bi bi-archive"></span>
+                Histórico de Préstamos
+            </h4>
+            @if (reservasHistoricas.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Autor</th>
+                                <th class="fecha-column">Retirado</th>
+                                <th class="fecha-column">Devuelto</th>
+                                <th class="estado-column">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reserva in reservasHistoricas)
+                            {
+                                <tr>
+                                    <td>@reserva.LibroNombre</td>
+                                    <td>@reserva.NombreAutor</td>
+                                    <td>@reserva.FechaPrestamo.ToShortDateString()</td>
+                                    <td>@reserva.FechaDevolucion.ToShortDateString()</td>
+                                    <td>
+                                        <span class="badge badge-devuelto">@reserva.Estado</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-section">
+                    <span class="bi bi-journal-x empty-icon"></span>
+                    <p>No tienes préstamos históricos</p>
                 </div>
             }
         </div>
@@ -201,52 +344,46 @@
 
 @code {
     private List<ReservaViewModel> reservas = new();
+    private List<ReservaViewModel> reservasPendientes = new();
+    private List<ReservaViewModel> reservasActivas = new();
+    private List<ReservaViewModel> reservasHistoricas = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            // Obtener el ID del usuario logeado desde AuthContext
             var usuarioId = AuthContext.UserId;
-            Console.WriteLine($"[MisReservas] UsuarioId: {usuarioId}");
-
             if (usuarioId == 0)
             {
-                // Si no hay un usuario logeado, redirigir a la página de login
                 NavigationManager.NavigateTo("/login");
                 return;
             }
 
-            // Obtener todos los préstamos desde el servicio
             var prestamos = await PrestamoService.GetPrestamosAsync();
-            Console.WriteLine($"[MisReservas] Préstamos cargados: {prestamos?.Count ?? 0}");
-
-            // Obtener todos los libros desde el servicio
             var libros = await LibroService.GetLibrosAsync();
-            Console.WriteLine($"[MisReservas] Libros cargados: {libros?.Count ?? 0}");
 
-            // Filtrar los préstamos del usuario logeado
+            // Modificar esta condición para incluir los eliminados que están devueltos
             reservas = prestamos?
-           .Where(p => p.UsuarioId == usuarioId && !p.Eliminado)
-           .Select(p =>
-           {
-               var libro = libros?.FirstOrDefault(l => l.Id == p.LibroId);
-               return new ReservaViewModel
-               {
-                   Id = p.Id,
-                   FechaPrestamo = p.FechaPrestamo,
-                   FechaDevolucion = p.FechaDevolucion,
-                   Estado = p.Estado,
-                   LibroNombre = libro?.Titulo ?? "Desconocido",
-                   NombreAutor = libro?.NombreAutor ?? "Desconocido",
-                   AnioDePublicacion = libro?.AnioDePublicacion.ToString() ?? "Desconocido",
-                   NombreEditorial = libro?.NombreEditorial ?? "Desconocido"
-               };
-           })
-           .ToList();
+                .Where(p => p.UsuarioId == usuarioId &&
+                       (!p.Eliminado || (p.Eliminado && p.Estado == EstadoPrestamo.Devuelto)))
+                .Select(p => new ReservaViewModel
+                    {
+                        Id = p.Id,
+                        FechaPrestamo = p.FechaPrestamo,
+                        FechaDevolucion = p.FechaDevolucion,
+                        Estado = p.Estado,
+                        LibroNombre = libros.FirstOrDefault(l => l.Id == p.LibroId)?.Titulo ?? "Desconocido",
+                        NombreAutor = libros.FirstOrDefault(l => l.Id == p.LibroId)?.NombreAutor ?? "Desconocido",
+                        NombreEditorial = libros.FirstOrDefault(l => l.Id == p.LibroId)?.NombreEditorial ?? "Desconocido",
+                        AnioDePublicacion = libros.FirstOrDefault(l => l.Id == p.LibroId)?.AnioDePublicacion.ToString() ?? "N/A",
+                        EstaVencido = p.Estado == EstadoPrestamo.Retirado && p.FechaDevolucion < DateTime.Now // Calcular si está vencido
+                    })
+                .ToList();
 
-
-            Console.WriteLine($"[MisReservas] Reservas filtradas: {reservas.Count}");
+            // Agrupar por estados
+            reservasPendientes = reservas.Where(r => r.Estado == EstadoPrestamo.Reservado).ToList();
+            reservasActivas = reservas.Where(r => r.Estado == EstadoPrestamo.Retirado).ToList();
+            reservasHistoricas = reservas.Where(r => r.Estado == EstadoPrestamo.Devuelto).ToList();
         }
         catch (Exception ex)
         {
@@ -254,15 +391,43 @@
         }
     }
 
+    private async Task CancelarReserva(int prestamoId)
+    {
+        if (await ConfirmarCancelacion())
+        {
+            try
+            {
+                var prestamo = await PrestamoService.GetPrestamoByIdAsync(prestamoId);
+                if (prestamo != null)
+                {
+                    prestamo.Eliminado = true; // Eliminación lógica
+                    await PrestamoService.ModificarPrestamoAsync(prestamo);
+                    await OnInitializedAsync(); // Recargar datos
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cancelar reserva: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task<bool> ConfirmarCancelacion()
+    {
+        return await JSRuntime.InvokeAsync<bool>("confirm", "¿Estás seguro de cancelar esta reserva?");
+    }
+
     private class ReservaViewModel
     {
         public int Id { get; set; }
         public DateTime FechaPrestamo { get; set; }
         public DateTime FechaDevolucion { get; set; }
-        public EstadoPrestamo Estado { get; set; } // Cambiar aquí
+        public EstadoPrestamo Estado { get; set; }
         public string LibroNombre { get; set; }
         public string NombreAutor { get; set; }
-        public string AnioDePublicacion { get; set; }
         public string NombreEditorial { get; set; }
+        public string AnioDePublicacion { get; set; }
+        ////COCACOLA
+        public bool EstaVencido { get; set; }
     }
 }
