@@ -25,6 +25,32 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
             _httpClient = HttpClientProvider.GetHttpClient(_authContext.UserToken);
         }
 
+
+        public async Task<List<Libro>> GetLibrosPaginadosAsync(int pagina, int tamañoPagina)
+{
+    try
+    {
+        var response = await _httpClient.GetAsync($"api/Libros?pagina={pagina}&tamañoPagina={tamañoPagina}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return System.Text.Json.JsonSerializer.Deserialize<List<Libro>>(jsonString, 
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Libro>();
+        }
+        else
+        {
+            return new List<Libro>();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error obteniendo libros: {ex.Message}");
+        return new List<Libro>();
+    }
+}
+
+
         public async Task<List<Libro>> GetLibrosAsync()
         {
             List<Libro> libros = new List<Libro>();

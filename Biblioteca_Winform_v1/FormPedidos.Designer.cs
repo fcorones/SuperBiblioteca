@@ -43,8 +43,8 @@
             autoresToolStripMenuItem = new ToolStripMenuItem();
             editorialesToolStripMenuItem = new ToolStripMenuItem();
             génerosToolStripMenuItem = new ToolStripMenuItem();
-            chkMostrarActivos = new CheckBox();
             cerrarSesiónToolStripMenuItem = new ToolStripMenuItem();
+            chkMostrarActivos = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)dataGridViewPedidos).BeginInit();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -77,7 +77,7 @@
             buttonCREAR_Pedido.Name = "buttonCREAR_Pedido";
             buttonCREAR_Pedido.Size = new Size(143, 67);
             buttonCREAR_Pedido.TabIndex = 9;
-            buttonCREAR_Pedido.Text = "CREAR";
+            buttonCREAR_Pedido.Text = "CREAR PEDIDO";
             buttonCREAR_Pedido.UseVisualStyleBackColor = true;
             buttonCREAR_Pedido.Click += buttonCREAR_Pedido_Click;
             // 
@@ -87,7 +87,7 @@
             buttonMODIFICAR_Pedido.Name = "buttonMODIFICAR_Pedido";
             buttonMODIFICAR_Pedido.Size = new Size(164, 67);
             buttonMODIFICAR_Pedido.TabIndex = 10;
-            buttonMODIFICAR_Pedido.Text = "RETIRADO / NO RETIRADO";
+            buttonMODIFICAR_Pedido.Text = "MARCAR \r\nRETIRADO / NO RETIRADO";
             buttonMODIFICAR_Pedido.UseVisualStyleBackColor = true;
             buttonMODIFICAR_Pedido.Click += buttonMODIFICAR_Pedido_Click;
             // 
@@ -97,7 +97,7 @@
             buttonELIMINAR_Pedido.Name = "buttonELIMINAR_Pedido";
             buttonELIMINAR_Pedido.Size = new Size(143, 67);
             buttonELIMINAR_Pedido.TabIndex = 11;
-            buttonELIMINAR_Pedido.Text = "ELIMINAR/RESTAURAR";
+            buttonELIMINAR_Pedido.Text = "ELIMINAR/RESTAURAR\r\nPEDIDO\r\n";
             buttonELIMINAR_Pedido.UseVisualStyleBackColor = true;
             buttonELIMINAR_Pedido.Click += buttonELIMINAR_Pedido_Click;
             // 
@@ -143,14 +143,14 @@
             // librosToolStripMenuItem
             // 
             librosToolStripMenuItem.Name = "librosToolStripMenuItem";
-            librosToolStripMenuItem.Size = new Size(180, 26);
+            librosToolStripMenuItem.Size = new Size(174, 26);
             librosToolStripMenuItem.Text = "Libros";
             librosToolStripMenuItem.Click += librosToolStripMenuItem_Click;
             // 
             // usuariosToolStripMenuItem
             // 
             usuariosToolStripMenuItem.Name = "usuariosToolStripMenuItem";
-            usuariosToolStripMenuItem.Size = new Size(180, 26);
+            usuariosToolStripMenuItem.Size = new Size(174, 26);
             usuariosToolStripMenuItem.Text = "Usuarios";
             usuariosToolStripMenuItem.Click += usuariosToolStripMenuItem_Click;
             // 
@@ -158,30 +158,37 @@
             // 
             pedidosToolStripMenuItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             pedidosToolStripMenuItem.Name = "pedidosToolStripMenuItem";
-            pedidosToolStripMenuItem.Size = new Size(180, 26);
+            pedidosToolStripMenuItem.Size = new Size(174, 26);
             pedidosToolStripMenuItem.Text = "Pedidos";
             pedidosToolStripMenuItem.Click += pedidosToolStripMenuItem_Click;
             // 
             // autoresToolStripMenuItem
             // 
             autoresToolStripMenuItem.Name = "autoresToolStripMenuItem";
-            autoresToolStripMenuItem.Size = new Size(180, 26);
+            autoresToolStripMenuItem.Size = new Size(174, 26);
             autoresToolStripMenuItem.Text = "Autores";
             autoresToolStripMenuItem.Click += autoresToolStripMenuItem_Click;
             // 
             // editorialesToolStripMenuItem
             // 
             editorialesToolStripMenuItem.Name = "editorialesToolStripMenuItem";
-            editorialesToolStripMenuItem.Size = new Size(180, 26);
+            editorialesToolStripMenuItem.Size = new Size(174, 26);
             editorialesToolStripMenuItem.Text = "Editoriales";
             editorialesToolStripMenuItem.Click += editorialesToolStripMenuItem_Click;
             // 
             // génerosToolStripMenuItem
             // 
             génerosToolStripMenuItem.Name = "génerosToolStripMenuItem";
-            génerosToolStripMenuItem.Size = new Size(180, 26);
+            génerosToolStripMenuItem.Size = new Size(174, 26);
             génerosToolStripMenuItem.Text = "Géneros";
             génerosToolStripMenuItem.Click += génerosToolStripMenuItem_Click;
+            // 
+            // cerrarSesiónToolStripMenuItem
+            // 
+            cerrarSesiónToolStripMenuItem.Name = "cerrarSesiónToolStripMenuItem";
+            cerrarSesiónToolStripMenuItem.Size = new Size(174, 26);
+            cerrarSesiónToolStripMenuItem.Text = "Cerrar Sesión";
+            cerrarSesiónToolStripMenuItem.Click += cerrarSesiónToolStripMenuItem_Click;
             // 
             // chkMostrarActivos
             // 
@@ -193,13 +200,6 @@
             chkMostrarActivos.Text = "Mostrar pedidos retirados";
             chkMostrarActivos.UseVisualStyleBackColor = true;
             chkMostrarActivos.CheckedChanged += checkBox1_CheckedChanged;
-            // 
-            // cerrarSesiónToolStripMenuItem
-            // 
-            cerrarSesiónToolStripMenuItem.Name = "cerrarSesiónToolStripMenuItem";
-            cerrarSesiónToolStripMenuItem.Size = new Size(180, 26);
-            cerrarSesiónToolStripMenuItem.Text = "Cerrar Sesión";
-            cerrarSesiónToolStripMenuItem.Click += cerrarSesiónToolStripMenuItem_Click;
             // 
             // FormPedidos
             // 

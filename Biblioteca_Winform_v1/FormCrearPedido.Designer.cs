@@ -120,7 +120,7 @@
             // txtId_Libro
             // 
             txtId_Libro.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtId_Libro.Location = new Point(971, 46);
+            txtId_Libro.Location = new Point(973, 88);
             txtId_Libro.Name = "txtId_Libro";
             txtId_Libro.Size = new Size(214, 33);
             txtId_Libro.TabIndex = 23;
@@ -128,7 +128,7 @@
             // txtId_Cliente
             // 
             txtId_Cliente.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtId_Cliente.Location = new Point(971, 110);
+            txtId_Cliente.Location = new Point(973, 152);
             txtId_Cliente.Name = "txtId_Cliente";
             txtId_Cliente.Size = new Size(214, 33);
             txtId_Cliente.TabIndex = 24;
@@ -137,7 +137,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 13F);
-            label4.Location = new Point(870, 46);
+            label4.Location = new Point(872, 88);
             label4.Name = "label4";
             label4.Size = new Size(75, 25);
             label4.TabIndex = 27;
@@ -147,7 +147,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 13F);
-            label5.Location = new Point(857, 110);
+            label5.Location = new Point(859, 152);
             label5.Name = "label5";
             label5.Size = new Size(88, 25);
             label5.TabIndex = 28;
@@ -157,7 +157,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 13F);
-            label6.Location = new Point(825, 174);
+            label6.Location = new Point(827, 216);
             label6.Name = "label6";
             label6.Size = new Size(129, 25);
             label6.TabIndex = 29;
@@ -167,7 +167,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 13F);
-            label7.Location = new Point(780, 237);
+            label7.Location = new Point(782, 279);
             label7.Name = "label7";
             label7.Size = new Size(174, 25);
             label7.TabIndex = 30;
@@ -198,7 +198,7 @@
             dtpFecha_Retiro.CustomFormat = "dd-MM-yyyy";
             dtpFecha_Retiro.Font = new Font("Segoe UI", 12F);
             dtpFecha_Retiro.Format = DateTimePickerFormat.Custom;
-            dtpFecha_Retiro.Location = new Point(971, 175);
+            dtpFecha_Retiro.Location = new Point(973, 217);
             dtpFecha_Retiro.Name = "dtpFecha_Retiro";
             dtpFecha_Retiro.Size = new Size(214, 29);
             dtpFecha_Retiro.TabIndex = 33;
@@ -208,27 +208,30 @@
             dtpFecha_Devolucion.CustomFormat = "dd-MM-yyyy";
             dtpFecha_Devolucion.Font = new Font("Segoe UI", 12F);
             dtpFecha_Devolucion.Format = DateTimePickerFormat.Custom;
-            dtpFecha_Devolucion.Location = new Point(971, 233);
+            dtpFecha_Devolucion.Location = new Point(973, 275);
             dtpFecha_Devolucion.Name = "dtpFecha_Devolucion";
             dtpFecha_Devolucion.Size = new Size(214, 29);
             dtpFecha_Devolucion.TabIndex = 34;
             // 
             // monthCalendarDisponibilidad
             // 
-            monthCalendarDisponibilidad.CalendarDimensions = new Size(2, 2);
-            monthCalendarDisponibilidad.Font = new Font("Segoe UI", 9F);
-            monthCalendarDisponibilidad.Location = new Point(803, 343);
+            monthCalendarDisponibilidad.CalendarDimensions = new Size(2, 1);
+            monthCalendarDisponibilidad.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            monthCalendarDisponibilidad.Location = new Point(827, 442);
             monthCalendarDisponibilidad.Name = "monthCalendarDisponibilidad";
             monthCalendarDisponibilidad.TabIndex = 35;
+            monthCalendarDisponibilidad.DateChanged += monthCalendarDisponibilidad_DateChanged;
             // 
             // lblEstadoPrestamo
             // 
             lblEstadoPrestamo.AutoSize = true;
             lblEstadoPrestamo.Font = new Font("Segoe UI", 13F);
-            lblEstadoPrestamo.Location = new Point(803, 304);
+            lblEstadoPrestamo.Location = new Point(827, 379);
+            lblEstadoPrestamo.MaximumSize = new Size(400, 0);
             lblEstadoPrestamo.Name = "lblEstadoPrestamo";
             lblEstadoPrestamo.Size = new Size(0, 25);
             lblEstadoPrestamo.TabIndex = 36;
+            lblEstadoPrestamo.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnVer_Reserva
             // 
@@ -244,7 +247,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1293, 680);
+            ClientSize = new Size(1277, 676);
             Controls.Add(btnVer_Reserva);
             Controls.Add(lblEstadoPrestamo);
             Controls.Add(monthCalendarDisponibilidad);

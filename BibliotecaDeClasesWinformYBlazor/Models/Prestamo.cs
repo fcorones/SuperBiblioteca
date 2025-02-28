@@ -18,19 +18,6 @@ namespace BibliotecaDeClasesWinformYBlazor.Models
         public int UsuarioId { get; set; }
         public int LibroId { get; set; }
 
-        //////////
-        ///
-
-        /*
-        public string UsuarioNombre { get; set; }
-
-        public string LibroNombre { get; set; }
-
-        public int NumeroEdicion { get; set; }
-
-        public string LibroNombreEspaniol  { get; set; }
-
-        public string LibroEditorial { get; set; }
-        */
+     
     }
 }

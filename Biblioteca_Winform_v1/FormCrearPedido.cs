@@ -161,17 +161,14 @@ namespace Biblioteca_Winform_v1
                     if (prestamosRetirados.Any())
                     {
                         var prestamo = prestamosRetirados.First(); // Tomar el más reciente retirado
-                        lblEstadoPrestamo.Text = $"Libro en préstamo desde: {prestamo.FechaPrestamo:dd/MM/yyyy} hasta {prestamo.FechaDevolucion:dd/MM/yyyy}";
+                        lblEstadoPrestamo.Text = $"En préstamo: {prestamo.FechaPrestamo:dd/MM/yyyy} hasta {prestamo.FechaDevolucion:dd/MM/yyyy}";
                     }
                     else
                     {
-                        lblEstadoPrestamo.Text = "Este libro tiene préstamos registrados, pero no hay préstamos retirados.";
+                        lblEstadoPrestamo.Text = "Este libro no está actualmente en préstamo";
                     }
                 }
-                else
-                {
-                    lblEstadoPrestamo.Text = "Este libro no tiene préstamos registrados.";
-                }
+                
             }
             catch (Exception ex)
             {
@@ -263,7 +260,7 @@ namespace Biblioteca_Winform_v1
                     FechaDevolucion = fechaDevolucion,
                     UsuarioId = usuarioId,
                     LibroId = libroId,
-                    Estado = EstadoPrestamo.Reservado, 
+                    Estado = EstadoPrestamo.Reservado,
                     Eliminado = false
                 };
 
@@ -400,7 +397,9 @@ namespace Biblioteca_Winform_v1
             }
         }
 
+        private void monthCalendarDisponibilidad_DateChanged(object sender, DateRangeEventArgs e)
+        {
 
-
+        }
     }
 }
