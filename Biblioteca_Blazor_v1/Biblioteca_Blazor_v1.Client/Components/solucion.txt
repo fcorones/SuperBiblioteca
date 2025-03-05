@@ -1,0 +1,24 @@
+﻿private async Task CancelarReserva(int prestamoId)
+    {
+        try
+        {
+            var prestamo = await _prestamoService.GetPrestamoByIdAsync(prestamoId);
+
+            if (prestamo == null)
+            {
+                await MostrarError("Préstamo no encontrado");
+                return;
+            }
+
+            prestamo.Eliminado = true;
+            _navigationManager.NavigateTo("/blanco");
+            await _prestamoService.ModificarPrestamoAsync(prestamo);
+
+            // Redirige a la página blanca para forzar refresh
+            
+        }
+        catch (Exception ex)
+        {
+            await MostrarError($"Error cancelando reserva: {ex.Message}");
+        }
+    }

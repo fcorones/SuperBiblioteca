@@ -39,6 +39,7 @@ var host = builder.Build();
 
 // Inicializar AuthContext
 var authContext = host.Services.GetRequiredService<AuthContext>();
+//await authContext.LoadTokenFromLocalStorageAsync(); 
 authContext.Initialize();
 
 await host.RunAsync();

@@ -70,19 +70,48 @@ namespace BibliotecaDeClasesWinformYBlazor.Servicios
                 throw new Exception($" {errorMessage}");
             }
 
-            // Actualizar el estado del libro correspondiente
-            var libroService = new LibroService(_authContext);
-            var libro = await libroService.GetLibroByIdAsync(prestamo.LibroId);
+            
+        }
+        /* BACKUP por las dudas
+        public async Task EliminarPrestamoAsync(int prestamoId)
+        {
+            // Obtener el préstamo existente
+            var prestamo = await GetPrestamoByIdAsync(prestamoId);
 
-            if (libro != null)
+            if (prestamo == null)
             {
-                // Si el préstamo está en estado "Retirado", el libro está prestado
-                libro.BoolPrestado = prestamo.Estado == EstadoPrestamo.Retirado;
-                await libroService.ModificarLibroAsync(libro);
+                throw new Exception("Préstamo no encontrado");
+            }
+
+            // Realizar la eliminación lógica
+            prestamo.Eliminado = true;
+
+            // Serializar y enviar la actualización
+            var json = JsonConvert.SerializeObject(prestamo);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"api/Prestamos/{prestamoId}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error al eliminar el préstamo: {errorMessage}");
+            }
+
+            // Actualizar estado del libro si es necesario
+            if (prestamo.Estado == EstadoPrestamo.Retirado)
+            {
+                var libroService = new LibroService(_authContext);
+                var libro = await libroService.GetLibroByIdAsync(prestamo.LibroId);
+
+                if (libro != null)
+                {
+                    libro.BoolPrestado = false;
+                    await libroService.ModificarLibroAsync(libro);
+                }
             }
         }
-
-
+        */
 
 
     }
