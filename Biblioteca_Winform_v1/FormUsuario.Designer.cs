@@ -173,7 +173,7 @@
             // chkMostrarEliminados
             // 
             chkMostrarEliminados.AutoSize = true;
-            chkMostrarEliminados.Location = new Point(933, 592);
+            chkMostrarEliminados.Location = new Point(914, 592);
             chkMostrarEliminados.Name = "chkMostrarEliminados";
             chkMostrarEliminados.Size = new Size(175, 19);
             chkMostrarEliminados.TabIndex = 8;
@@ -204,11 +204,11 @@
             // checkUsrPedidos
             // 
             checkUsrPedidos.AutoSize = true;
-            checkUsrPedidos.Location = new Point(1114, 592);
+            checkUsrPedidos.Location = new Point(1095, 592);
             checkUsrPedidos.Name = "checkUsrPedidos";
-            checkUsrPedidos.Size = new Size(182, 19);
+            checkUsrPedidos.Size = new Size(226, 19);
             checkUsrPedidos.TabIndex = 15;
-            checkUsrPedidos.Text = "Mostrar usuarios con pedidos";
+            checkUsrPedidos.Text = "Mostrar usuarios con pedidos retirado";
             checkUsrPedidos.UseVisualStyleBackColor = true;
             checkUsrPedidos.CheckedChanged += checkUsrPedidos_CheckedChanged;
             // 

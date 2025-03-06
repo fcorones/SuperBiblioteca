@@ -23,6 +23,7 @@ namespace Biblioteca_Winform_v1
 
 
 
+
         public FormUsuario()
         {
             InitializeComponent();
@@ -91,7 +92,7 @@ namespace Biblioteca_Winform_v1
                 if (checkUsrPedidos.Checked)
                 {
                     // Filtrar usuarios con préstamos retirados
-                    usuarios = usuarios.Where(u => prestamos.Any(p => p.UsuarioId == u.Id && p.Estado == EstadoPrestamo.Retirado)).ToList(); // Cambiar aquí
+                    usuarios = usuarios.Where(u => prestamos.Any(p => p.UsuarioId == u.Id && (p.Estado == EstadoPrestamo.Retirado || p.Estado == EstadoPrestamo.Reservado))).ToList(); // Cambiar aquí
                 }
 
                 // Preparar los datos para mostrar
@@ -104,7 +105,7 @@ namespace Biblioteca_Winform_v1
                     usuario.Telefono,
                     usuario.Direccion,
                     usuario.RolNombre,
-                    Pedido = prestamos.Any(p => p.UsuarioId == usuario.Id) // Verificar si tiene pedidos
+                    Pedido = prestamos.Any(p => p.UsuarioId == usuario.Id && !p.Eliminado) // Verificar si tiene pedidos
                 })
                 .OrderBy(usuario => usuario.Eliminado) // Agrupar eliminados al final
                 .ThenBy(usuario => usuario.Id)
@@ -268,7 +269,7 @@ namespace Biblioteca_Winform_v1
 
                     // Filtrar las reservas del usuario seleccionado
                     var reservasUsuario = prestamos
-                        .Where(p => p.UsuarioId == usuarioId)
+                        .Where(p => p.UsuarioId == usuarioId && !p.Eliminado)
                         .Select(prestamo => new
                         {
                             prestamo.Id,
