@@ -77,6 +77,15 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
+                // Verificar si ya existe un autor con el mismo nombre
+                // Obtener todos los autores y verificar si ya existe uno con el mismo nombre
+                var autores = await _autorService.GetAutoresAsync();
+                if (autores.Any(a => a.NombreAutor.Equals(txtNombreAutor.Text.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageBox.Show("Ya existe un autor con el mismo nombre.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var autor = new Autor
                 {
                     Id = _autorEnEdicion?.Id ?? idAutor,

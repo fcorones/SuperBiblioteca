@@ -66,6 +66,14 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
+                // Obtener todas las editoriales y verificar si ya existe una con el mismo nombre
+                var editoriales = await _editorialService.GetEditorialesAsync();
+                if (editoriales.Any(ed => ed.NombreEditorial.Equals(txtNombreEditorial.Text.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageBox.Show("Ya existe una editorial con el mismo nombre.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var editorial = new Editorial
                 {
                     Id = _editorialEnEdicion?.Id ?? idEditorial,

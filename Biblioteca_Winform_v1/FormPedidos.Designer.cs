@@ -31,7 +31,6 @@
             dataGridViewPedidos = new DataGridView();
             btnActualizar_Pedido = new Button();
             buttonCREAR_Pedido = new Button();
-            buttonMODIFICAR_Pedido = new Button();
             buttonELIMINAR_Pedido = new Button();
             chkMostrarEliminados = new CheckBox();
             label1 = new Label();
@@ -82,16 +81,6 @@
             buttonCREAR_Pedido.Text = "CREAR PEDIDO";
             buttonCREAR_Pedido.UseVisualStyleBackColor = true;
             buttonCREAR_Pedido.Click += buttonCREAR_Pedido_Click;
-            // 
-            // buttonMODIFICAR_Pedido
-            // 
-            buttonMODIFICAR_Pedido.Location = new Point(35, 588);
-            buttonMODIFICAR_Pedido.Name = "buttonMODIFICAR_Pedido";
-            buttonMODIFICAR_Pedido.Size = new Size(75, 44);
-            buttonMODIFICAR_Pedido.TabIndex = 10;
-            buttonMODIFICAR_Pedido.Text = "MARCAR \r\nRETIRADO / NO RETIRADO";
-            buttonMODIFICAR_Pedido.UseVisualStyleBackColor = true;
-            buttonMODIFICAR_Pedido.Click += buttonMODIFICAR_Pedido_Click;
             // 
             // buttonELIMINAR_Pedido
             // 
@@ -235,7 +224,6 @@
             Controls.Add(label1);
             Controls.Add(chkMostrarEliminados);
             Controls.Add(buttonELIMINAR_Pedido);
-            Controls.Add(buttonMODIFICAR_Pedido);
             Controls.Add(buttonCREAR_Pedido);
             Controls.Add(btnActualizar_Pedido);
             Controls.Add(dataGridViewPedidos);
@@ -259,7 +247,6 @@
         private DataGridView dataGridViewPedidos;
         private Button btnActualizar_Pedido;
         private Button buttonCREAR_Pedido;
-        private Button buttonMODIFICAR_Pedido;
         private Button buttonELIMINAR_Pedido;
         private CheckBox chkMostrarEliminados;
         private Label label1;

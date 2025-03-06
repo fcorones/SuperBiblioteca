@@ -211,12 +211,28 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
+
+
+                if (txtId_Cliente.Text.Length > 10)
+                {
+                    MessageBox.Show("El ID del cliente no puede tener más de 10 dígitos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Validar que el ID del libro no sea demasiado largo
+                if (txtId_Libro.Text.Length > 10)
+                {
+                    MessageBox.Show("El ID del libro no puede tener más de 10 dígitos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 // Validar que el ID del libro sea un número entero no negativo
                 if (!int.TryParse(txtId_Libro.Text, out int libroId) || libroId <= 0)
                 {
                     MessageBox.Show("ID de libro inválido. Debe ser un número entero positivo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
 
                 // Validar la fecha de retiro (no puede ser anterior a la fecha actual)
                 if (dtpFecha_Retiro.Value.Date < DateTime.Today)
@@ -231,6 +247,22 @@ namespace Biblioteca_Winform_v1
                     MessageBox.Show("La fecha de devolución no puede ser anterior a la fecha de retiro.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
+                // Consultar directamente si el usuario y el libro existen en la base de datos
+                var usuario = await _usuarioService.GetUsuarioByIdAsync(usuarioId);
+                if (usuario == null)
+                {
+                    MessageBox.Show("El usuario ingresado no existe.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var libro = await _libroService.GetLibroByIdAsync(libroId);
+                if (libro == null)
+                {
+                    MessageBox.Show("El libro ingresado no existe.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
 
                 // Obtener datos
                 var fechaPrestamo = dtpFecha_Retiro.Value.Date;
@@ -271,14 +303,21 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
-                // Guardar en la base de datos a través del servicio
-                await _prestamoService.CrearPrestamoAsync(nuevoPrestamo);
+                try
+                {
+                    // Guardar en la base de datos a través del servicio
+                    await _prestamoService.CrearPrestamoAsync(nuevoPrestamo);
 
-                MessageBox.Show("Préstamo creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Préstamo creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Opcional: Limpiar campos o cerrar el formulario
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    // Opcional: Limpiar campos o cerrar el formulario
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al guardar el préstamo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {

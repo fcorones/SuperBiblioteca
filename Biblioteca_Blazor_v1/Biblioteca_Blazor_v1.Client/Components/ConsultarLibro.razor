@@ -470,6 +470,12 @@
         get => _minYear;
         set
         {
+            if (value.HasValue && value < 0) // Validar que el año no sea negativo
+            {
+                _errorMessage = "El año no puede ser negativo.";
+                return; // No actualizar el valor
+            }
+
             if (value.HasValue && MaxYear.HasValue && value > MaxYear)
             {
                 _errorMessage = "El año mínimo no puede ser mayor que el año máximo.";
@@ -481,12 +487,17 @@
         }
     }
 
-
     private int? MaxYear
     {
         get => _maxYear;
         set
         {
+            if (value.HasValue && value < 0) // Validar que el año no sea negativo
+            {
+                _errorMessage = "El año no puede ser negativo.";
+                return; // No actualizar el valor
+            }
+
             if (value.HasValue && MinYear.HasValue && value < MinYear)
             {
                 _errorMessage = "El año máximo no puede ser menor que el año mínimo.";
