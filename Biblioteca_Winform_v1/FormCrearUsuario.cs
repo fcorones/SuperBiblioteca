@@ -81,6 +81,18 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
+                if (System.Text.RegularExpressions.Regex.IsMatch(txtNombre_Usuario.Text, @"\d"))
+                {
+                    MessageBox.Show("El nombre no puede contener números.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (txtNombre_Usuario.Text.Length > 30)
+                {
+                    MessageBox.Show("El nombre no puede tener más de 30 caracteres.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 if (string.IsNullOrWhiteSpace(txtEmail_Usuario.Text))
                 {
                     MessageBox.Show("El email es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -90,6 +102,12 @@ namespace Biblioteca_Winform_v1
                 if (string.IsNullOrWhiteSpace(txtTelefono_Usuario.Text))
                 {
                     MessageBox.Show("El teléfono es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (txtTelefono_Usuario.Text.Length > 15)
+                {
+                    MessageBox.Show("El número de teléfono no puede tener más de 15 caracteres.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -117,6 +135,12 @@ namespace Biblioteca_Winform_v1
                 if (!txtEmail_Usuario.Text.Contains("@"))
                 {
                     MessageBox.Show("El email debe contener un arroba (@).", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (txtEmail_Usuario.Text.Length > 50)
+                {
+                    MessageBox.Show("El correo electrónico no puede superar los 50 caracteres.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 

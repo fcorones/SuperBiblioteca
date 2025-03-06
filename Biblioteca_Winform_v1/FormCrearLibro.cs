@@ -217,6 +217,11 @@ namespace Biblioteca_Winform_v1
                         MessageBox.Show("El año de publicación debe ser un número válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
+                    else if (anio < 0) // Validar que el año no sea negativo
+                    {
+                        MessageBox.Show("El año de publicación no puede ser negativo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                     else
                     {
                         anioDePublicacion = anio;

@@ -50,6 +50,14 @@ namespace Biblioteca_Winform_v1
                     return;
                 }
 
+                // Obtener todos los géneros y verificar si ya existe uno con el mismo nombre
+                var generos = await _generosService.GetGenerosAsync();
+                if (generos.Any(g => g.NombreGenero.Equals(txtNombre_Genero.Text.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageBox.Show("Ya existe un género con el mismo nombre.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var genero = new Genero
                 {
                     Id = _generoEnEdicion?.Id ?? 0,

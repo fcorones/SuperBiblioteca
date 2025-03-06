@@ -8,7 +8,7 @@
 @using BibliotecaDeClasesWinformYBlazor.Servicios
 
 <style>
-    .reservas-container {
+    .reservas-container {       /*Contenedor principal*/
         max-width: 1200px;
         margin: 2rem auto;
         padding: 0 1rem;
@@ -35,18 +35,18 @@
     }
 
     .table tr.vencido {
-        background-color: #ffebee; /* Fondo rojo claro */
+        background-color: #ffebee; /* Color rojo para los vencidos */
     }
 
         .table tr.vencido:hover {
-            background-color: #ffcdd2; /* Fondo rojo claro más oscuro al hacer hover */
+            background-color: #ffcdd2; 
         }
 
         .table tr.vencido td {
-            color: #c62828; /* Texto rojo oscuro */
+            color: #c62828; 
         }
 
-    .section-title {
+    .section-title { /*Estilo para los títulos de las secciones*/
         font-size: 1.4rem;
         color: #2d2d2d;
         margin-bottom: 1.5rem;
@@ -59,12 +59,12 @@
 
     .table {
         width: 100%;
-        border-collapse: separate;
+        border-collapse: separate; /*Estilos para las tablas*/
         border-spacing: 0;
     }
 
         .table th {
-            background: #4a4a4a; /* Color sólido en lugar de gradiente */
+            background: #4a4a4a; 
             color: white;
             padding: 0.75rem;
             font-weight: 500;
@@ -87,7 +87,7 @@
         font-weight: 500;
     }
 
-    .badge-reservado {
+    .badge-reservado {          /*Iconos rojo verde y amarillo de reservado retirado y devuelto*/
         background: #fff3cd;
         color: #856404;
     }
@@ -132,7 +132,7 @@
     }
 
     @@keyframes spin {
-        to {
+        to { /*animacion*/
             transform: rotate(360deg);
         }
     }
