@@ -564,7 +564,7 @@
         
         // Filtro por géneros
         if (SelectedGeneros.Any())
-            query = query.Where(l => SelectedGeneros.All(g => l.NombresGeneros.Contains(g)));
+            query = query.Where(l => SelectedGeneros.Any(g => l.NombresGeneros.Contains(g)));
 
         // Filtro por rango de años (corregido)
         if (MinYear.HasValue)
